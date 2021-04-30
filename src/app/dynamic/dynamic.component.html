@@ -1,0 +1,20 @@
+<div
+  style="border: 1px solid blue; display: inline-block"
+  cdkDrag
+  cdkDragBoundary=".example-boundary"
+  [cdkDragFreeDragPosition]="dragPosition"
+  (cdkDragEnded)="onDragEnded($event)"
+>
+  <p>Dynamic Component {{ index }}</p>
+  <div>{{ compInput }}</div>
+  <hr />
+
+  <div style="margin: 10px">
+    <label for="item-input">Add String:</label>
+    <input type="text" id="item-input" #newStringItem />
+    <button (click)="putOutString(newStringItem.value)">
+      send string parrent
+    </button>
+  </div>
+  <div class="example-handle" cdkDragHandle>drag</div>
+</div>
