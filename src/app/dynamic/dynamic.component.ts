@@ -1,19 +1,48 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  AfterViewInit,
+} from '@angular/core';
 
 @Component({
   selector: 'app-dynamic',
   templateUrl: './dynamic.component.html',
   styleUrls: ['./dynamic.component.css'],
 })
-export class DynamicComponent implements OnInit {
+export class DynamicComponent implements AfterViewInit {
   @Input() index: number;
   @Input() compInput: string;
 
   @Output() newStringEvent: EventEmitter<string> = new EventEmitter<string>();
-  /*   @Output() outputEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() newArrayEvent: EventEmitter<string[]> = new EventEmitter<
-    string[]
-  >(); */
+
+  //------------------------------------------------------------------------
+
+  mathField: any;
+  MQ: any;
+
+  /*   ngOnInit() {
+    this.mathField = document.getElementById('math-field-animated');
+
+    this.MQ = (window as any).MathQuill.getInterface(2);
+    var mathField = this.MQ.MathField(this.mathField, {
+      spaceBehavesLikeTab: true,
+    });
+  } */
+
+  ngAfterViewInit() {
+    let hello = 'math-field-animated' + this.index;
+    this.mathField = document.getElementById(hello);
+
+    this.MQ = (window as any).MathQuill.getInterface(2);
+    var mathField = this.MQ.MathField(this.mathField, {
+      spaceBehavesLikeTab: true,
+    });
+  }
+
+  //-------------------------------------------------------------
 
   dragPosition = { x: 20, y: 20 };
 
@@ -34,10 +63,6 @@ export class DynamicComponent implements OnInit {
     this.childArray.push(value);
     // this.newArrayEvent.emit(this.childArray);
   }
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   onDragEnded(event) {
     let element = event.source.getRootElement();
