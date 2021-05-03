@@ -75,7 +75,7 @@ export class AppComponent {
     const componentRef = this.container.createComponent(componentFactory);
 
     // pass some data to the component
-    componentRef.instance.index = this.counter++;
+    componentRef.instance.uid = this.counter++;
     componentRef.instance['compInput'] = compInput;
 
     componentRef.instance.newStringEvent.subscribe((val: string) => {

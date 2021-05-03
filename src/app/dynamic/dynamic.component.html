@@ -1,11 +1,18 @@
 <div
-  style="border: 1px solid blue; display: inline-block"
+  style="
+    border: 1px solid blue;
+    display: inline-block;
+    position: relative;
+    background-color: rgb(241, 255, 255);
+  "
+  [style.z-index]="customZIndex"
   cdkDrag
   cdkDragBoundary=".example-boundary"
   [cdkDragFreeDragPosition]="dragPosition"
   (cdkDragEnded)="onDragEnded($event)"
+  (click)="indexService.moveCompToTop(uid)"
 >
-  <p>Dynamic Component {{ index }}</p>
+  <p>Dynamic Component {{ uid }}</p>
   <div>{{ compInput }}</div>
   <hr />
 
@@ -19,7 +26,7 @@
 
   <!---------------------------------------------------------------------->
   <!-- <span id="math-field-animated"></span> -->
-  <span [attr.id]="'math-field-animated' + index"></span>
+  <span [attr.id]="'math-field-animated' + uid"></span>
   <!---------------------------------------------------------------------->
 
   <div class="example-handle" cdkDragHandle>drag</div>

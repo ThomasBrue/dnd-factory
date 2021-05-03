@@ -7,13 +7,15 @@ import {
   AfterViewInit,
 } from '@angular/core';
 
+import { IndexService } from './index.service';
+
 @Component({
   selector: 'app-dynamic',
   templateUrl: './dynamic.component.html',
   styleUrls: ['./dynamic.component.css'],
 })
-export class DynamicComponent implements AfterViewInit {
-  @Input() index: number;
+export class DynamicComponent implements AfterViewInit, OnInit {
+  @Input() uid: number;
   @Input() compInput: string;
 
   @Output() newStringEvent: EventEmitter<string> = new EventEmitter<string>();
@@ -23,18 +25,28 @@ export class DynamicComponent implements AfterViewInit {
   mathField: any;
   MQ: any;
 
-  /*   ngOnInit() {
-    this.mathField = document.getElementById('math-field-animated');
+  customZIndex: number;
 
-    this.MQ = (window as any).MathQuill.getInterface(2);
-    var mathField = this.MQ.MathField(this.mathField, {
-      spaceBehavesLikeTab: true,
+  //  public users$: Observable<IUser[]>
+
+  constructor(public indexService: IndexService) {}
+
+  ngOnInit() {
+    this.customZIndex = this.indexService.registerDynComp(this.uid);
+
+    this.indexService.myBoolean.subscribe((value) => {
+      console.log('value' + this.uid + ' VALUE: ' + value);
+
+      this.customZIndex = this.indexService.dynCompMap.get(this.uid);
+      console.log('uid: ' + this.uid + ' customZindex: ' + this.customZIndex);
     });
-  } */
+
+    //  this.indexService.dynCompMap.
+  }
 
   ngAfterViewInit() {
-    let hello = 'math-field-animated' + this.index;
-    this.mathField = document.getElementById(hello);
+    let myMathField = 'math-field-animated' + this.uid;
+    this.mathField = document.getElementById(myMathField);
 
     this.MQ = (window as any).MathQuill.getInterface(2);
     var mathField = this.MQ.MathField(this.mathField, {
