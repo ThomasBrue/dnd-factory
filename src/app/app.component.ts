@@ -65,7 +65,7 @@ export class AppComponent {
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-  add(compInput: string = ''): void {
+  addComponent(compInput: string = ''): void {
     // create the component factory
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
       DynamicComponent

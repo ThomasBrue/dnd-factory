@@ -10,13 +10,13 @@
   cdkDragBoundary=".example-boundary"
   [cdkDragFreeDragPosition]="dragPosition"
   (cdkDragEnded)="onDragEnded($event)"
-  (click)="indexService.moveCompToTop(uid)"
+  (mousedown)="indexService.moveCompToTop(uid)"
 >
   <p>Dynamic Component {{ uid }}</p>
   <div>{{ compInput }}</div>
   <hr />
 
-  <div style="margin: 10px">
+  <div style="margin: 10px;">
     <label for="item-input">Add String:</label>
     <input type="text" id="item-input" #newStringItem />
     <button (click)="putOutString(newStringItem.value)">
@@ -24,10 +24,8 @@
     </button>
   </div>
 
-  <!---------------------------------------------------------------------->
-  <!-- <span id="math-field-animated"></span> -->
   <span [attr.id]="'math-field-animated' + uid"></span>
-  <!---------------------------------------------------------------------->
 
   <div class="example-handle" cdkDragHandle>drag</div>
+  <div>z-index {{ customZIndex }}</div>
 </div>
