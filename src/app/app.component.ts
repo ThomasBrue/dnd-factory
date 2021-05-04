@@ -3,6 +3,9 @@ import {
   ComponentFactoryResolver,
   ViewChild,
   ViewContainerRef,
+  HostListener,
+  ViewChildren,
+  QueryList,
 } from '@angular/core';
 import { DynamicComponent } from './dynamic/dynamic.component';
 
@@ -56,6 +59,13 @@ export class AppComponent {
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
 
+  /*   @ViewChildren('comp', { read: ViewContainerRef })
+  public dynComponents: QueryList<ViewContainerRef>;
+
+  @ViewChildren(DynamicComponent) public dynamicComponentArray: QueryList<
+    DynamicComponent
+  >; */
+
   private counter = 1;
 
   myString = 'defaultString';
@@ -64,6 +74,14 @@ export class AppComponent {
   myArrayFromChild: string[] = [];
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
+
+  ngDoCheck() {
+    /*     console.log(this.dynamicComponentArray);
+
+    this.dynamicComponentArray.forEach((component) => {
+      console.log(component);
+    }); */
+  }
 
   addComponent(compInput: string = ''): void {
     // create the component factory
@@ -87,4 +105,36 @@ export class AppComponent {
       this.myArray = [...this.myArray];
     });
   }
+
+  //-------------------------------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------------------------------
+
+  /*   @HostListener('document:keydown', ['$event'])
+  handleKeydownEvent(event: KeyboardEvent) {
+    switch (event.key) {
+      case '/': // Division
+        this.MQ.MathField(this.mathField).write('\\frac{}{}');
+        this.MQ.MathField(this.mathField).keystroke('Up');
+        break;
+    }
+  } */
+
+  /* myFunction(keyBoardInput: any) {
+  this.MQ.MathField(this.mathField).write(keyBoardInput);
+  this.MQ.MathField(this.mathField).focus();
+}
+
+@HostListener('document:keyup', ['$event'])
+handleKeyupEvent(event: KeyboardEvent) {
+  console.log('Keyup: ', event.key);
+
+  if (event.key == 'Shift' || event.key == 'Alt' || event.key == 'Control') {
+    this.specialKey_1 = '';
+    this.specialKey_2 = '';
+  }
+
+  this.myLatex = this.mathFieldXXX.latex();
+
+  this.resultLatex = this.converterService.convertLatex(this.myLatex);
+} */
 }

@@ -5,6 +5,8 @@ import {
   Output,
   EventEmitter,
   AfterViewInit,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 
 import { IndexService } from './index.service';
@@ -27,8 +29,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
   customZIndex: number;
 
-  //  public users$: Observable<IUser[]>
-
   constructor(public indexService: IndexService) {}
 
   ngOnInit() {
@@ -44,10 +44,14 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     let myMathField = 'math-field-animated' + this.uid;
     this.mathField = document.getElementById(myMathField);
 
+    //  console.log(this.mathField.getElementByTagName('textarea'));
+
     this.MQ = (window as any).MathQuill.getInterface(2);
     var mathField = this.MQ.MathField(this.mathField, {
       spaceBehavesLikeTab: true,
     });
+
+    console.log(this.mathField.nativeElement);
   }
 
   //-------------------------------------------------------------
