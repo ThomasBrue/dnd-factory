@@ -28,16 +28,28 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   MQ: any;
 
   customZIndex: number;
+  mathFieldBridge;
 
   constructor(public indexService: IndexService) {}
 
   ngOnInit() {
     this.customZIndex = this.indexService.registerDynComp(this.uid);
 
-    this.indexService.myBoolean.subscribe((value) => {
-      this.customZIndex = this.indexService.dynCompMap.get(this.uid);
+    this.indexService.mainTrigger.subscribe(() => {
+      //     this.customZIndex = this.indexService.dynCompMap.get(this.uid);
+      this.customZIndex = this.indexService.mainArray[this.uid].zIndex;
+
       console.log('uid: ' + this.uid + ' customZindex: ' + this.customZIndex);
     });
+
+    this.indexService.mainArray[this.uid].individualTrigger.subscribe(
+      (key: any) => {
+        console.log('key: ', key);
+        if (key) {
+          console.log('YYY: ', this.mathFieldBridge.latex());
+        }
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -47,11 +59,9 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     //  console.log(this.mathField.getElementByTagName('textarea'));
 
     this.MQ = (window as any).MathQuill.getInterface(2);
-    var mathField = this.MQ.MathField(this.mathField, {
+    this.mathFieldBridge = this.MQ.MathField(this.mathField, {
       spaceBehavesLikeTab: true,
     });
-
-    console.log(this.mathField.nativeElement);
   }
 
   //-------------------------------------------------------------
