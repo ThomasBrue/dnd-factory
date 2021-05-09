@@ -38,7 +38,9 @@ export class IndexService {
   }
 
   keyInput(key: any) {
-    console.log('keyInput------');
+    console.log('keyInput------', key);
+
+    console.log('lastComponent: ', this.lastIndex);
 
     this.mainArray[this.lastIndex].individualTrigger.next(key);
   }
