@@ -72,7 +72,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     this.MQ = (window as any).MathQuill.getInterface(2);
     this.mathFieldBridge = this.MQ.MathField(this.mathField, {
       substituteTextarea: () => {
-        return document.getElementById('substitue-id');
+        return document.getElementById(`substitue-id${this.uid}`);
       },
       spaceBehavesLikeTab: true,
     });
