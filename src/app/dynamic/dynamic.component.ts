@@ -22,6 +22,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
   @Output() newStringEvent: EventEmitter<string> = new EventEmitter<string>();
 
+  @Output() closed = new EventEmitter();
+
   //------------------------------------------------------------------------
 
   mathField: any;
@@ -55,9 +57,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
         //      this.MQ.MathField(this.mathField).write(key);
         //  this.MQ.MathField(this.mathField).focus();
         console.log('YYY: ', this.mathFieldBridge.latex());
-        this.indexService.mainArray[
-          this.uid
-        ].latexOutput = this.mathFieldBridge.latex();
+        this.indexService.mainArray[this.uid].latexOutput =
+          this.mathFieldBridge.latex();
       }
       //   }
     );
@@ -71,9 +72,9 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
     this.MQ = (window as any).MathQuill.getInterface(2);
     this.mathFieldBridge = this.MQ.MathField(this.mathField, {
-      substituteTextarea: () => {
+      /*       substituteTextarea: () => {
         return document.getElementById(`substitue-id${this.uid}`);
-      },
+      }, */
       spaceBehavesLikeTab: true,
     });
   }
@@ -177,24 +178,24 @@ export class DynamicComponent implements AfterViewInit, OnInit {
         case ':': // Definition
           this.MQ.MathField(this.mathField).write(':=');
           break;
-
+        /* 
         case '=': // Evaluate numerically
           this.MQ.MathField(this.mathField).write('=');
-          break;
-
+          break; */
+        /* 
         case '/': // Division
           this.MQ.MathField(this.mathField).write('\\frac{}{}');
           this.MQ.MathField(this.mathField).keystroke('Up');
-          break;
-
+          break; */
+        /* 
         case '*': // Multiplication
           this.MQ.MathField(this.mathField).write('\\cdot');
-          break;
+          break; */
 
-        case 'Dead': // Exponentiation
+        /*         case 'Dead': // Exponentiation
           this.MQ.MathField(this.mathField).write('^{}');
           this.MQ.MathField(this.mathField).keystroke('Up');
-          break;
+          break; */
 
         case "'": // Parentheses
           //  this.MQ.MathField(this.mathField).write("( )");
@@ -241,7 +242,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
             key !== 'Alt' &&
             key !== 'CapsLock'
           ) {
-            this.MQ.MathField(this.mathField).write(key);
+            //  this.MQ.MathField(this.mathField).write(key);
           }
       }
     }

@@ -48,12 +48,16 @@ export class AppComponent {
 
   addComponent(compInput: string = ''): void {
     // create the component factory
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      DynamicComponent
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
 
     // add the component to the view
     const componentRef = this.container.createComponent(componentFactory);
+
+    /*     componentRef.instance.closed.subscribe(() => {
+      document.body.removeChild(componentFactory);
+      this.applicationRef.detachView(componentRef.hostView);
+    }); */
 
     // pass some data to the component
     componentRef.instance.uid = this.counter++;
