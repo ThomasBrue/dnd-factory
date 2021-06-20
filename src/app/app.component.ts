@@ -90,8 +90,9 @@ export class AppComponent implements AfterViewInit {
 
   addComponent(compInput: string = ''): void {
     // create the component factory
-    const componentFactory =
-      this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+      DynamicComponent
+    );
 
     // add the component to the view
     this.componentRef = this.container.createComponent(componentFactory);
@@ -151,4 +152,6 @@ handleKeyupEvent(event: KeyboardEvent) {
     this.specialKey_1 = '';
     this.specialKey_2 = '';
   }
+
+  */
 }
