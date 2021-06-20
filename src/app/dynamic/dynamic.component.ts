@@ -78,6 +78,12 @@ export class DynamicComponent implements AfterViewInit, OnInit {
       }, */
       spaceBehavesLikeTab: true,
     });
+
+    this.MQ.MathField(this.mathField).focus();
+  }
+
+  removeComponent(uid: number) {
+    console.log('removeCompUID: ', uid);
   }
 
   //-------------------------------------------------------------

@@ -35,7 +35,7 @@ export class AppComponent implements AfterViewInit {
 
   private componentRef: ComponentRef<any>;
 
-  private componentRefArray: ComponentRef<any>[];
+  private componentRefArray: ComponentRef<any>[] = [];
 
   /*   onDragEnded(event) {
     let element = event.source.getRootElement();
@@ -75,7 +75,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChildren('viewRef', { read: ViewContainerRef })
   public viewRefs: QueryList<any>;
 
-  private counter = 1;
+  private counter = 0;
 
   myString = 'defaultString';
   myArray: string[] = ['item1', 'item2', 'item3', 'item4'];
@@ -95,7 +95,11 @@ export class AppComponent implements AfterViewInit {
     );
 
     // add the component to the view
-    this.componentRef = this.container.createComponent(componentFactory);
+    //  this.componentRef = this.container.createComponent(componentFactory);
+
+    this.componentRefArray.push(
+      this.container.createComponent(componentFactory)
+    );
 
     /*     componentRef.instance.closed.subscribe(() => {
       document.body.removeChild(componentFactory);
@@ -103,25 +107,32 @@ export class AppComponent implements AfterViewInit {
     }); */
 
     // pass some data to the component
-    this.componentRef.instance.uid = this.counter++;
-    this.componentRef.instance['compInput'] = compInput;
 
-    this.componentRef.instance.newStringEvent.subscribe((val: string) => {
+    this.componentRefArray[this.counter].instance.uid = this.counter++;
+
+    /* this.componentRef.instance.uid = this.counter++;
+    this.componentRef.instance['compInput'] = compInput; */
+
+    /*     this.componentRef.instance.newStringEvent.subscribe((val: string) => {
       console.log('myString: ', val);
       this.myString = val;
 
       console.log('myArray: ', this.myArray);
       this.myArray.push(val);
       this.myArray = [...this.myArray];
-    });
+    }); */
 
     console.log('ComponentFactory: ', componentFactory);
     console.log('componentRef: ', this.componentRef);
   }
 
   removeComponent() {
-    if (this.componentRef) {
-      this.componentRef.destroy();
+    console.log('componentRefArray: ', this.componentRefArray);
+
+    if (this.componentRefArray) {
+      this.componentRefArray[this.componentRefArray.length - 1].destroy();
+      //   this.componentRef.destroy();
+      this.componentRefArray.pop();
     }
   }
 
