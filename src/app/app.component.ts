@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import { DynamicComponent } from './dynamic/dynamic.component';
 
+import { IndexService } from './dynamic/index.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -88,12 +90,16 @@ export class AppComponent implements AfterViewInit {
 
   addComponent(compInput: string = ''): void {
     // create the component factory
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      DynamicComponent
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
 
     // add the component to the view
     this.componentRef = this.container.createComponent(componentFactory);
+
+    /*     componentRef.instance.closed.subscribe(() => {
+      document.body.removeChild(componentFactory);
+      this.applicationRef.detachView(componentRef.hostView);
+    }); */
 
     // pass some data to the component
     this.componentRef.instance.uid = this.counter++;
@@ -145,9 +151,4 @@ handleKeyupEvent(event: KeyboardEvent) {
     this.specialKey_1 = '';
     this.specialKey_2 = '';
   }
-
-  this.myLatex = this.mathFieldXXX.latex();
-
-  this.resultLatex = this.converterService.convertLatex(this.myLatex);
-} */
 }

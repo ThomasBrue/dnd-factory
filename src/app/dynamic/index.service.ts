@@ -5,24 +5,44 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class IndexService {
-  public dynCompMap = new Map();
-  public myBoolean: Subject<boolean> = new Subject<boolean>();
+  public mainTrigger: Subject<boolean> = new Subject<boolean>();
+  public mainArray = [];
+  public lastIndex = 0;
 
   registerDynComp(uid: number): number {
-    this.dynCompMap.set(uid, this.dynCompMap.size);
-    return this.dynCompMap.size;
+    this.lastIndex = uid;
+    this.mainArray.push({
+      uid: uid,
+      zIndex: uid,
+      individualTrigger: new Subject<boolean>(),
+      latexOutput: '',
+    });
+    console.log(this.mainArray);
+    return uid;
   }
 
   moveCompToTop(uid: number) {
-    for (let [key, value] of this.dynCompMap) {
-      if (uid !== key) {
-        this.dynCompMap.set(key, 0);
+    this.lastIndex = uid;
+    this.mainArray.forEach((obj) => {
+      if (obj.uid !== uid) {
+        this.mainArray[obj.uid].zIndex = 0;
       }
-    }
-    this.dynCompMap.set(uid, this.dynCompMap.size);
-    this.myBoolean.next(true);
+    });
 
-    console.log('moveCompToTop: ', this.dynCompMap);
+    this.mainArray[uid].zIndex = this.mainArray.length;
+    this.mainTrigger.next();
+
+    this.mainArray[uid].individualTrigger.next();
+
+    console.log('moveCompToTop: ', this.mainArray);
+  }
+
+  keyInput(key: any) {
+    console.log('keyInput------', key);
+
+    console.log('lastComponent: ', this.lastIndex);
+
+    this.mainArray[this.lastIndex].individualTrigger.next(key);
   }
 
   constructor() {}

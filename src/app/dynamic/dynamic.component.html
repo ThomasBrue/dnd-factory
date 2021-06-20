@@ -16,15 +16,17 @@
   <div>{{ compInput }}</div>
   <hr />
 
-  <div style="margin: 10px;">
+  <div style="margin: 10px">
     <label for="item-input">Add String:</label>
     <input type="text" id="item-input" #newStringItem />
     <button (click)="putOutString(newStringItem.value)">
       send string parrent
     </button>
+    <button (click)="closed.next()">remove</button>
   </div>
 
   <span [attr.id]="'math-field-animated' + uid"></span>
+  <span tabindex="0" [attr.id]="'substitue-id' + uid"></span>
 
   <div class="example-handle" cdkDragHandle>drag</div>
   <div>z-index {{ customZIndex }}</div>
