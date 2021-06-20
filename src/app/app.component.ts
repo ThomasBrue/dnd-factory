@@ -108,7 +108,11 @@ export class AppComponent implements AfterViewInit {
 
     // pass some data to the component
 
-    this.componentRefArray[this.counter].instance.uid = this.counter++;
+    // this.componentRefArray[this.counter].instance.uid = this.counter++;
+
+    this.componentRefArray[
+      this.componentRefArray.length - 1
+    ].instance.uid = this.counter++;
 
     /* this.componentRef.instance.uid = this.counter++;
     this.componentRef.instance['compInput'] = compInput; */
@@ -129,11 +133,14 @@ export class AppComponent implements AfterViewInit {
   removeComponent() {
     console.log('componentRefArray: ', this.componentRefArray);
 
-    if (this.componentRefArray) {
+    if (this.componentRefArray && this.componentRefArray.length) {
+      console.log('111_removeComponent: ', this.componentRefArray);
+
       this.componentRefArray[this.componentRefArray.length - 1].destroy();
       //   this.componentRef.destroy();
       this.componentRefArray.pop();
     }
+    console.log('222_removeComponent: ', this.componentRefArray);
   }
 
   //-------------------------------------------------------------------------------------------------------------
