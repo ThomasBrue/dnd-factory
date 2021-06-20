@@ -6,6 +6,8 @@ import {
   HostListener,
   ViewChildren,
   QueryList,
+  AfterViewInit,
+  ComponentRef,
 } from '@angular/core';
 import { DynamicComponent } from './dynamic/dynamic.component';
 
@@ -14,7 +16,7 @@ import { DynamicComponent } from './dynamic/dynamic.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   title = 'dnd-factory';
 
   dragPosition = { x: 20, y: 20 };
@@ -28,6 +30,10 @@ export class AppComponent {
       y: this.dragPosition.y + 50,
     };
   }
+
+  private componentRef: ComponentRef<any>;
+
+  private componentRefArray: ComponentRef<any>[];
 
   /*   onDragEnded(event) {
     let element = event.source.getRootElement();
@@ -59,12 +65,13 @@ export class AppComponent {
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
 
-  /*   @ViewChildren('comp', { read: ViewContainerRef })
+  /*     @ViewChildren('comp', { read: ViewContainerRef })
   public dynComponents: QueryList<ViewContainerRef>;
+ */
+  @ViewChildren('app-dynamic') public dynamicComponentArray: QueryList<any>;
 
-  @ViewChildren(DynamicComponent) public dynamicComponentArray: QueryList<
-    DynamicComponent
-  >; */
+  @ViewChildren('viewRef', { read: ViewContainerRef })
+  public viewRefs: QueryList<any>;
 
   private counter = 1;
 
@@ -75,13 +82,9 @@ export class AppComponent {
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-  ngDoCheck() {
-    /*     console.log(this.dynamicComponentArray);
+  ngAfterViewInit() {}
 
-    this.dynamicComponentArray.forEach((component) => {
-      console.log(component);
-    }); */
-  }
+  ngDoCheck() {}
 
   addComponent(compInput: string = ''): void {
     // create the component factory
@@ -90,13 +93,13 @@ export class AppComponent {
     );
 
     // add the component to the view
-    const componentRef = this.container.createComponent(componentFactory);
+    this.componentRef = this.container.createComponent(componentFactory);
 
     // pass some data to the component
-    componentRef.instance.uid = this.counter++;
-    componentRef.instance['compInput'] = compInput;
+    this.componentRef.instance.uid = this.counter++;
+    this.componentRef.instance['compInput'] = compInput;
 
-    componentRef.instance.newStringEvent.subscribe((val: string) => {
+    this.componentRef.instance.newStringEvent.subscribe((val: string) => {
       console.log('myString: ', val);
       this.myString = val;
 
@@ -104,20 +107,30 @@ export class AppComponent {
       this.myArray.push(val);
       this.myArray = [...this.myArray];
     });
+
+    console.log('ComponentFactory: ', componentFactory);
+    console.log('componentRef: ', this.componentRef);
+  }
+
+  removeComponent() {
+    if (this.componentRef) {
+      this.componentRef.destroy();
+    }
   }
 
   //-------------------------------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------------------------------
 
-  /*   @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keydown', ['$event'])
   handleKeydownEvent(event: KeyboardEvent) {
     switch (event.key) {
       case '/': // Division
-        this.MQ.MathField(this.mathField).write('\\frac{}{}');
-        this.MQ.MathField(this.mathField).keystroke('Up');
+        console.log('Division');
+        /*         this.MQ.MathField(this.mathField).write('\\frac{}{}');
+        this.MQ.MathField(this.mathField).keystroke('Up'); */
         break;
     }
-  } */
+  }
 
   /* myFunction(keyBoardInput: any) {
   this.MQ.MathField(this.mathField).write(keyBoardInput);

@@ -34,7 +34,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.customZIndex = this.indexService.registerDynComp(this.uid);
 
-    this.indexService.myBoolean.subscribe((value) => {
+    this.indexService.myBoolean.subscribe(() => {
       this.customZIndex = this.indexService.dynCompMap.get(this.uid);
       console.log('uid: ' + this.uid + ' customZindex: ' + this.customZIndex);
     });
