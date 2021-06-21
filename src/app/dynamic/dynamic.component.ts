@@ -24,6 +24,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
   @Output() closed = new EventEmitter();
 
+  @Output() closeEvent = new EventEmitter<number>();
+
   //------------------------------------------------------------------------
 
   mathField: any;
@@ -84,6 +86,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
   removeComponent(uid: number) {
     console.log('removeCompUID: ', uid);
+    //  this.closeEvent.emit(uid);
+    this.indexService.removeComponent(uid);
   }
 
   //-------------------------------------------------------------

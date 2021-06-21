@@ -82,20 +82,32 @@ export class AppComponent implements AfterViewInit {
 
   myArrayFromChild: string[] = [];
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    public indexService: IndexService
+  ) {}
+
+  ngOnInit() {
+    this.indexService.toDeleteComponent.subscribe((uid) => {
+      if (this.componentRefArray && this.componentRefArray.length) {
+        for (let i = 0; i < this.componentRefArray.length; i++) {
+          if (this.componentRefArray[i].instance.uid === uid) {
+            this.componentRefArray[i].destroy();
+            this.componentRefArray.splice(i, 1);
+          }
+        }
+      }
+    });
+  }
 
   ngAfterViewInit() {}
 
   ngDoCheck() {}
 
   addComponent(compInput: string = ''): void {
-    // create the component factory
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
       DynamicComponent
     );
-
-    // add the component to the view
-    //  this.componentRef = this.container.createComponent(componentFactory);
 
     this.componentRefArray.push(
       this.container.createComponent(componentFactory)

@@ -8,6 +8,7 @@ export class IndexService {
   public mainTrigger: Subject<boolean> = new Subject<boolean>();
   public mainArray = [];
   public lastIndex = 0;
+  public toDeleteComponent: Subject<number> = new Subject<number>();
 
   registerDynComp(uid: number): number {
     this.lastIndex = uid;
@@ -17,7 +18,6 @@ export class IndexService {
       individualTrigger: new Subject<boolean>(),
       latexOutput: '',
     });
-    console.log(this.mainArray);
     return uid;
   }
 
@@ -28,20 +28,16 @@ export class IndexService {
         this.mainArray[obj.uid].zIndex = 0;
       }
     });
-
     this.mainArray[uid].zIndex = this.mainArray.length;
     this.mainTrigger.next();
-
     this.mainArray[uid].individualTrigger.next();
+  }
 
-    console.log('moveCompToTop: ', this.mainArray);
+  removeComponent(uid) {
+    this.toDeleteComponent.next(uid);
   }
 
   keyInput(key: any) {
-    console.log('keyInput------', key);
-
-    console.log('lastComponent: ', this.lastIndex);
-
     this.mainArray[this.lastIndex].individualTrigger.next(key);
   }
 
