@@ -104,6 +104,22 @@ export class AppComponent implements AfterViewInit {
 
   ngDoCheck() {}
 
+/*   @HostListener('click') onClick() {
+    window.alert("hover");
+  } */
+
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    console.log("TARGET: ", event);
+    
+    /* if(this.eRef.nativeElement.contains(event.target)) {
+      this.text = "clicked inside";
+    } else {
+      this.text = "clicked outside";
+    } */
+  }
+
+
   addComponent(compInput: string = ''): void {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
       DynamicComponent
