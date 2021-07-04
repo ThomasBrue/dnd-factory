@@ -21,17 +21,17 @@ import { IndexService } from './dynamic/index.service';
 export class AppComponent implements AfterViewInit {
   title = 'dnd-factory';
 
-  dragPosition = { x: 20, y: 20 };
+ // dragPosition = { x: 20, y: 20 };
 
   public xPosition = 20;
   public yPosition = 20;
 
-  changePosition() {
+/*   changePosition() {
     this.dragPosition = {
       x: this.dragPosition.x + 50,
       y: this.dragPosition.y + 50,
     };
-  }
+  } */
 
   private componentRef: ComponentRef<any>;
 
@@ -67,6 +67,9 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
 
+  @ViewChild('insertionCross', { read: ViewContainerRef })
+  insertionCross: ViewContainerRef;
+
   /*     @ViewChildren('comp', { read: ViewContainerRef })
   public dynComponents: QueryList<ViewContainerRef>;
  */
@@ -87,7 +90,27 @@ export class AppComponent implements AfterViewInit {
     public indexService: IndexService
   ) {}
 
+  
   ngOnInit() {
+
+
+  //  var d = document.getElementById('yourDivId');
+  
+/*     this.insertionCross.style.position = "absolute";
+    this.insertionCross.style.left = x_pos+'px';
+    this.insertionCross.style.top = y_pos+'px';
+    this.insertionCross.nativeElement.setAttribute('highlight', '');
+
+    let el = this.element.nativeElement;
+    el.setAttribute('style', 'color: white; background: red'); */
+
+    // this.insertionCross.
+
+/*     this.insertionCross.style.position = "absolute";
+    this.insertionCross.style.left = x_pos+'px';
+    this.insertionCross.style.top = y_pos+'px'; */
+
+
     this.indexService.toDeleteComponent.subscribe((uid) => {
       if (this.componentRefArray && this.componentRefArray.length) {
         for (let i = 0; i < this.componentRefArray.length; i++) {
@@ -100,7 +123,9 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+    this.insertionCross.element.nativeElement.setAttribute('style', 'color: green; background: red');
+  }
 
   ngDoCheck() {}
 
@@ -185,6 +210,14 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  
+  @HostListener('document:click', ['$event'])
+  handleClickEvent(event: KeyboardEvent) {
+    console.log("CLICK: ", event);
+    
+    }
+  
+
   /* myFunction(keyBoardInput: any) {
   this.MQ.MathField(this.mathField).write(keyBoardInput);
   this.MQ.MathField(this.mathField).focus();
@@ -200,4 +233,5 @@ handleKeyupEvent(event: KeyboardEvent) {
   }
 
   */
+
 }

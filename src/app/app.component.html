@@ -1,36 +1,10 @@
-<!-- <div style="height: 50px">
-  <h1>dnd-factory</h1>
-</div> -->
-
-<!-- <p>
-  <button (click)="changePosition()">Change element position</button>
-</p> -->
-
-<div class="example-boundary">
+<div class="example-boundary" >
   <div #container></div>
-  <!--   <div
-    class="example-box"
-    cdkDrag
-    cdkDragBoundary=".example-boundary"
-    [cdkDragFreeDragPosition]="dragPosition"
-    style="z-index: 100"
-    (cdkDragEnded)="onDragEnded($event)"
-  >
-    Drag me around_1
 
-    <div class="example-handle" cdkDragHandle>drag-handle</div>
-  </div>
-
-  <div class="example-box" cdkDrag cdkDragBoundary=".example-boundary">
-    Drag me around_2
-  </div> -->
+  <div #insertionCross style="border: 2px solid red; width: 50px; height: 50px;"></div>
 </div>
 
-<div>xPosition: {{ xPosition }}</div>
-<div>yPosition: {{ yPosition }}</div>
-
 <hr />
-<!-- <div #container></div> -->
 <button (click)="addComponent()">Add Dynamic Component</button>
 
 <div style="border: 2px solid rgb(11, 148, 172); padding: 20px; margin: 20px;">

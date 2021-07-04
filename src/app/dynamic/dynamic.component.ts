@@ -5,8 +5,6 @@ import {
   Output,
   EventEmitter,
   AfterViewInit,
-  ViewChild,
-  ElementRef,
 } from '@angular/core';
 
 import { IndexService } from './index.service';
@@ -21,63 +19,49 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   @Input() compInput: string;
 
   @Output() newStringEvent: EventEmitter<string> = new EventEmitter<string>();
-
   @Output() closed = new EventEmitter();
-
   @Output() closeEvent = new EventEmitter<number>();
 
-  //------------------------------------------------------------------------
-
+  dragPosition = { x: 0, y: 0 };
+  public xPosition = 0;
+  public yPosition = 0;
   mathField: any;
   MQ: any;
-
   customZIndex: number;
   mathFieldBridge;
   specialKey_1: String;
+
 
   constructor(public indexService: IndexService) {}
 
   ngOnInit() {
     this.customZIndex = this.indexService.registerDynComp(this.uid);
-
     this.indexService.mainTrigger.subscribe(() => {
-      //     this.customZIndex = this.indexService.dynCompMap.get(this.uid);
       this.customZIndex = this.indexService.mainArray[this.uid].zIndex;
-
-      console.log('uid: ' + this.uid + ' customZindex: ' + this.customZIndex);
     });
 
     this.indexService.mainArray[this.uid].individualTrigger.subscribe(
       (key: any) => {
-        //    if (key && key.length < 2) {
-        //--------DEAD --> ^     will be filtered due to length greater than 1-------------------------------------------------------------
-
         if (key) {
           this.handleKeydownEvent(key);
         }
-
-        //      this.MQ.MathField(this.mathField).write(key);
-        //  this.MQ.MathField(this.mathField).focus();
-        console.log('YYY: ', this.mathFieldBridge.latex());
         this.indexService.mainArray[
           this.uid
         ].latexOutput = this.mathFieldBridge.latex();
       }
-      //   }
     );
+
+  /*   this.dragPosition = {
+      x: this.dragPosition.x = 0,
+      y: this.dragPosition.y = 0,
+    }; */
   }
 
   ngAfterViewInit() {
     let myMathField = 'math-field-animated' + this.uid;
     this.mathField = document.getElementById(myMathField);
-
-    //  console.log(this.mathField.getElementByTagName('textarea'));
-
     this.MQ = (window as any).MathQuill.getInterface(2);
     this.mathFieldBridge = this.MQ.MathField(this.mathField, {
-      /*       substituteTextarea: () => {
-        return document.getElementById(`substitue-id${this.uid}`);
-      }, */
       spaceBehavesLikeTab: true,
     });
 
@@ -85,27 +69,11 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   }
 
   removeComponent(uid: number) {
-    console.log('removeCompUID: ', uid);
-    //  this.closeEvent.emit(uid);
     this.indexService.removeComponent(uid);
   }
 
-  //-------------------------------------------------------------
-
-  dragPosition = { x: 20, y: 20 };
-
-  public xPosition = 20;
-  public yPosition = 20;
-
-  childArray = ['childEl-1', 'childEl-2', 'childEl-3'];
-
   putOutString(value: string) {
     this.newStringEvent.emit(value);
-  }
-
-  putOutArray(value: string) {
-    this.childArray.push(value);
-    // this.newArrayEvent.emit(this.childArray);
   }
 
   onDragEnded(event) {
@@ -115,11 +83,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
     this.xPosition = boundingClientRect.x - parentPosition.left;
     this.yPosition = boundingClientRect.y - parentPosition.top;
-
-    console.log(
-      'x: ' + (boundingClientRect.x - parentPosition.left),
-      'y: ' + (boundingClientRect.y - parentPosition.top)
-    );
   }
 
   getPosition(el) {
@@ -132,9 +95,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     }
     return { top: y, left: x };
   }
-
-  //-------------------------------------------------------------------------
-  //----------------------------------------------------------------------
 
   handleKeydownEvent(key: string) {
     console.log('Keydown: ', key);
@@ -189,25 +149,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
         case ':': // Definition
           this.MQ.MathField(this.mathField).write(':=');
           break;
-        /* 
-        case '=': // Evaluate numerically
-          this.MQ.MathField(this.mathField).write('=');
-          break; */
-        /* 
-        case '/': // Division
-          this.MQ.MathField(this.mathField).write('\\frac{}{}');
-          this.MQ.MathField(this.mathField).keystroke('Up');
-          break; */
-        /* 
-        case '*': // Multiplication
-          this.MQ.MathField(this.mathField).write('\\cdot');
-          break; */
-
-        /*         case 'Dead': // Exponentiation
-          this.MQ.MathField(this.mathField).write('^{}');
-          this.MQ.MathField(this.mathField).keystroke('Up');
-          break; */
-
+       
         case "'": // Parentheses
           //  this.MQ.MathField(this.mathField).write("( )");
           this.MQ.MathField(this.mathField).write('\\left (  \\right )');
@@ -231,30 +173,11 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
         case 'ArrowUp':
           this.MQ.MathField(this.mathField).keystroke('UP');
-          console.log('ArrowUp----------------');
           break;
 
         case 'ArrowDown':
           this.MQ.MathField(this.mathField).keystroke('DOWN');
-          console.log('ArrowDown----------------');
           break;
-
-        default:
-          if (
-            key !== 'Shift' &&
-            key !== 'AltGraph' &&
-            key !== 'Backspace' &&
-            key !== 'ArrowUp' &&
-            key !== 'ArrowDown' &&
-            key !== 'ArrowRight' &&
-            key !== 'ArrowLeft' &&
-            key !== 'Control' &&
-            key !== 'Shift' &&
-            key !== 'Alt' &&
-            key !== 'CapsLock'
-          ) {
-            //  this.MQ.MathField(this.mathField).write(key);
-          }
       }
     }
   }
