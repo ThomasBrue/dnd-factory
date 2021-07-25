@@ -5,9 +5,10 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DynamicComponent } from './dynamic/dynamic.component';
+import { InsertionCrossComponent } from './insertion-cross/insertion-cross.component';
 
 @NgModule({
-  declarations: [AppComponent, DynamicComponent],
+  declarations: [AppComponent, DynamicComponent, InsertionCrossComponent],
   imports: [BrowserModule, BrowserAnimationsModule, DragDropModule],
   providers: [],
   bootstrap: [AppComponent],

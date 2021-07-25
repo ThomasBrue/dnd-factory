@@ -23,14 +23,13 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   @Output() closeEvent = new EventEmitter<number>();
 
   dragPosition = { x: 0, y: 0 };
-  public xPosition = 0;
-  public yPosition = 0;
+  /*   public xPosition = 0;
+  public yPosition = 0; */
   mathField: any;
   MQ: any;
   customZIndex: number;
   mathFieldBridge;
   specialKey_1: String;
-
 
   constructor(public indexService: IndexService) {}
 
@@ -45,13 +44,14 @@ export class DynamicComponent implements AfterViewInit, OnInit {
         if (key) {
           this.handleKeydownEvent(key);
         }
-        this.indexService.mainArray[
-          this.uid
-        ].latexOutput = this.mathFieldBridge.latex();
+        this.indexService.mainArray[this.uid].latexOutput =
+          this.mathFieldBridge.latex();
       }
     );
 
-  /*   this.dragPosition = {
+    this.dragPosition = this.indexService.insertionPoint;
+
+    /*   this.dragPosition = {
       x: this.dragPosition.x = 0,
       y: this.dragPosition.y = 0,
     }; */
@@ -81,8 +81,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     let boundingClientRect = element.getBoundingClientRect();
     let parentPosition = this.getPosition(element);
 
-    this.xPosition = boundingClientRect.x - parentPosition.left;
-    this.yPosition = boundingClientRect.y - parentPosition.top;
+    /*   this.xPosition = boundingClientRect.x - parentPosition.left;
+    this.yPosition = boundingClientRect.y - parentPosition.top; */
   }
 
   getPosition(el) {
@@ -149,7 +149,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
         case ':': // Definition
           this.MQ.MathField(this.mathField).write(':=');
           break;
-       
+
         case "'": // Parentheses
           //  this.MQ.MathField(this.mathField).write("( )");
           this.MQ.MathField(this.mathField).write('\\left (  \\right )');

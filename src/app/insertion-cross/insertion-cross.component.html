@@ -1,0 +1,45 @@
+<div
+  cdkDrag
+  [cdkDragFreeDragPosition]="dragPosition"
+  style="height: 24px; width: 24px"
+>
+  <div *ngIf="indexService.crossVisible">
+    <div
+      style="
+        height: 10px;
+        width: 10px;
+        border-bottom: 1px solid red;
+        border-right: 1px solid red;
+        float: left;
+      "
+    ></div>
+    <div
+      style="
+        height: 10px;
+        width: 10px;
+        border-left: 1px solid red;
+        border-bottom: 1px solid red;
+        float: left;
+      "
+    ></div>
+    <div
+      style="
+        height: 10px;
+        width: 10px;
+        border-right: 1px solid red;
+        border-top: 1px solid red;
+        float: left;
+      "
+    ></div>
+    <div
+      style="
+        height: 10px;
+        width: 10px;
+        border-top: 1px solid red;
+        border-left: 1px solid red;
+        float: left;
+      "
+    ></div>
+    <div style="width: 0; height: 0" cdkDragHandle></div>
+  </div>
+</div>
