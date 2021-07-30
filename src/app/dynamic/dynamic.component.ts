@@ -41,11 +41,33 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
     this.indexService.mainArray[this.uid].individualTrigger.subscribe(
       (key: any) => {
-        if (key) {
+        console.log('individualTrigger_key: ', key);
+
+        console.log(
+          'before_dc_latexOutput: ',
+          this.indexService.mainArray[this.uid].latexOutput
+        );
+
+        this.indexService.mainArray[
+          this.uid
+        ].latexOutput = this.mathFieldBridge.latex();
+
+        console.log(
+          'after_dc_latexOutput: ',
+          this.indexService.mainArray[this.uid].latexOutput
+        );
+
+        /* if (key) {
           this.handleKeydownEvent(key);
         }
-        this.indexService.mainArray[this.uid].latexOutput =
-          this.mathFieldBridge.latex();
+        this.indexService.mainArray[
+          this.uid
+        ].latexOutput = this.mathFieldBridge.latex();
+
+        console.log(
+          'dc_latexOutput: ',
+          this.indexService.mainArray[this.uid].latexOutput
+        ); */
       }
     );
 
@@ -66,6 +88,14 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     });
 
     this.MQ.MathField(this.mathField).focus();
+  }
+
+  logLatex() {
+    console.log('logLatex: ', this.mathFieldBridge.latex());
+
+    console.log('mainArray: ', this.indexService.mainArray[0]);
+
+    this.MQ.MathField(this.mathField).write('\\sqrt{}');
   }
 
   removeComponent(uid: number) {

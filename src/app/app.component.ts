@@ -120,10 +120,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const componentFactory =
-      this.componentFactoryResolver.resolveComponentFactory(
-        InsertionCrossComponent
-      );
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+      InsertionCrossComponent
+    );
     setTimeout(() => {
       this.container.createComponent(componentFactory);
     }, 0);
@@ -143,15 +142,19 @@ export class AppComponent implements AfterViewInit {
 
   addComponent(compInput: string = ''): void {
     if (this.indexService.crossVisible) {
-      const componentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
+      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+        DynamicComponent
+      );
 
       this.componentRefArray.push(
         this.container.createComponent(componentFactory)
       );
 
-      this.componentRefArray[this.componentRefArray.length - 1].instance.uid =
-        this.counter++;
+      this.indexService.currentSelectedItemUID = this.counter;
+
+      this.componentRefArray[
+        this.componentRefArray.length - 1
+      ].instance.uid = this.counter++;
 
       this.indexService.crossVisible = false;
 
@@ -178,17 +181,54 @@ export class AppComponent implements AfterViewInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeydownEvent(event: KeyboardEvent) {
+    console.log('ac_key: ', event.key);
+
     switch (event.key) {
       case '/': // Division
         console.log('Division');
         /*         this.MQ.MathField(this.mathField).write('\\frac{}{}');
         this.MQ.MathField(this.mathField).keystroke('Up'); */
         break;
+      case 'Backspace':
+        console.log('__backspace');
+
+        this.indexService.mainArray[
+          this.indexService.currentSelectedItemUID
+        ].individualTrigger.next();
+
+        for (let i = 0; i < this.indexService.mainArray.length; i++) {
+          if (
+            this.indexService.mainArray[i].uid ===
+            this.indexService.currentSelectedItemUID
+          ) {
+            console.log(
+              'ac_currentSelectedItemUID: ',
+              this.indexService.currentSelectedItemUID
+            );
+
+            console.log(
+              'ac_latexOutput: ',
+              this.indexService.mainArray[i].latexOutput
+            );
+
+            if (!this.indexService.mainArray[i].latexOutput) {
+              this.indexService.removeComponent(
+                this.indexService.mainArray[i].uid
+              );
+            }
+          }
+        }
+
+        break;
     }
 
     this.addComponent();
 
-    console.log('keyPress: ', event.key);
+    if (this.indexService.mainArray[this.indexService.currentSelectedItemUID]) {
+      this.indexService.mainArray[
+        this.indexService.currentSelectedItemUID
+      ].individualTrigger.next();
+    }
   }
 
   @HostListener('document:click', ['$event'])

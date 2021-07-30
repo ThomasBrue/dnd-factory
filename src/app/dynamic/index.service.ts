@@ -12,6 +12,7 @@ export class IndexService {
   public insertionPoint = { x: 100, y: 100 };
   public crossVisible = true;
   public clickedOnElement = false;
+  public currentSelectedItemUID = -1;
 
   //public cursorPosition = 0;
 
@@ -39,7 +40,8 @@ export class IndexService {
     this.mainArray[uid].individualTrigger.next();
   }
 
-  setClickedOnElement() {
+  setClickedOnElement(uid: number) {
+    this.currentSelectedItemUID = uid;
     console.log('indexService_CLICK');
     this.clickedOnElement = true;
   }
@@ -48,9 +50,9 @@ export class IndexService {
     this.toDeleteComponent.next(uid);
   }
 
-  keyInput(key: any) {
+  /*   keyInput(key: any) {
     this.mainArray[this.lastIndex].individualTrigger.next(key);
-  }
+  } */
 
   constructor() {}
 }
