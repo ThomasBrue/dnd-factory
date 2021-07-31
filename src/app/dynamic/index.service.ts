@@ -14,8 +14,6 @@ export class IndexService {
   public clickedOnElement = false;
   public currentSelectedItemUID = -1;
 
-  //public cursorPosition = 0;
-
   registerDynComp(uid: number): number {
     this.lastIndex = uid;
     this.mainArray.push({
@@ -49,10 +47,6 @@ export class IndexService {
   removeComponent(uid) {
     this.toDeleteComponent.next(uid);
   }
-
-  /*   keyInput(key: any) {
-    this.mainArray[this.lastIndex].individualTrigger.next(key);
-  } */
 
   constructor() {}
 }

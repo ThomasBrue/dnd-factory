@@ -88,7 +88,7 @@ export class AppComponent implements AfterViewInit {
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     public indexService: IndexService
-  ) {}
+  ) { }
 
   ngOnInit() {
     //  var d = document.getElementById('yourDivId');
@@ -128,17 +128,12 @@ export class AppComponent implements AfterViewInit {
     }, 0);
   }
 
-  ngDoCheck() {}
+/*   ngDoCheck() { }
   @HostListener('document:click', ['$event'])
   clickout(event) {
     console.log('TARGET: ', event);
 
-    /* if(this.eRef.nativeElement.contains(event.target)) {
-      this.text = "clicked inside";
-    } else {
-      this.text = "clicked outside";
-    } */
-  }
+  } */
 
   addComponent(compInput: string = ''): void {
     if (this.indexService.crossVisible) {
@@ -157,41 +152,22 @@ export class AppComponent implements AfterViewInit {
       ].instance.uid = this.counter++;
 
       this.indexService.crossVisible = false;
-
-      console.log('ComponentFactory: ', componentFactory);
-      console.log('componentRef: ', this.componentRef);
     }
   }
 
   removeComponent() {
-    console.log('componentRefArray: ', this.componentRefArray);
-
     if (this.componentRefArray && this.componentRefArray.length) {
-      console.log('111_removeComponent: ', this.componentRefArray);
-
       this.componentRefArray[this.componentRefArray.length - 1].destroy();
       //   this.componentRef.destroy();
       this.componentRefArray.pop();
     }
-    console.log('222_removeComponent: ', this.componentRefArray);
   }
-
-  //-------------------------------------------------------------------------------------------------------------
-  //-------------------------------------------------------------------------------------------------------------
 
   @HostListener('document:keydown', ['$event'])
   handleKeydownEvent(event: KeyboardEvent) {
-    console.log('ac_key: ', event.key);
 
     switch (event.key) {
-      case '/': // Division
-        console.log('Division');
-        /*         this.MQ.MathField(this.mathField).write('\\frac{}{}');
-        this.MQ.MathField(this.mathField).keystroke('Up'); */
-        break;
       case 'Backspace':
-        console.log('__backspace');
-
         this.indexService.mainArray[
           this.indexService.currentSelectedItemUID
         ].individualTrigger.next();
@@ -201,16 +177,6 @@ export class AppComponent implements AfterViewInit {
             this.indexService.mainArray[i].uid ===
             this.indexService.currentSelectedItemUID
           ) {
-            console.log(
-              'ac_currentSelectedItemUID: ',
-              this.indexService.currentSelectedItemUID
-            );
-
-            console.log(
-              'ac_latexOutput: ',
-              this.indexService.mainArray[i].latexOutput
-            );
-
             if (!this.indexService.mainArray[i].latexOutput) {
               this.indexService.removeComponent(
                 this.indexService.mainArray[i].uid
@@ -228,6 +194,15 @@ export class AppComponent implements AfterViewInit {
       this.indexService.mainArray[
         this.indexService.currentSelectedItemUID
       ].individualTrigger.next();
+    }
+  }
+
+  @HostListener('document:keyup', ['$event'])
+  handleKeyUpEvent(event: KeyboardEvent) {
+    if (this.indexService.mainArray[this.indexService.currentSelectedItemUID]) {
+      console.log("ac_individualTrigger: ");
+
+      this.indexService.mainArray[this.indexService.currentSelectedItemUID].individualTrigger.next();
     }
   }
 
