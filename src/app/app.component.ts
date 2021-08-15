@@ -8,11 +8,14 @@ import {
   QueryList,
   AfterViewInit,
   ComponentRef,
+  Renderer2,
+  ElementRef,
 } from '@angular/core';
 import { DynamicComponent } from './dynamic/dynamic.component';
 
 import { IndexService } from './dynamic/index.service';
 import { InsertionCrossComponent } from './insertion-cross/insertion-cross.component';
+import { SelectionBoxComponent } from './selection-box/selection-box.component';
 
 @Component({
   selector: 'app-root',
@@ -22,62 +25,19 @@ import { InsertionCrossComponent } from './insertion-cross/insertion-cross.compo
 export class AppComponent implements AfterViewInit {
   title = 'dnd-factory';
 
-  // dragPosition = { x: 20, y: 20 };
+  @ViewChild('myIdSelectBox') mySelectionBox: ElementRef;
 
   public xPosition = 20;
   public yPosition = 20;
 
-  /*   changePosition() {
-    this.dragPosition = {
-      x: this.dragPosition.x + 50,
-      y: this.dragPosition.y + 50,
-    };
-  } */
-
   private componentRef: ComponentRef<any>;
   private componentRefArray: ComponentRef<any>[] = [];
 
-  /*   onDragEnded(event) {
-    let element = event.source.getRootElement();
-    let boundingClientRect = element.getBoundingClientRect();
-    let parentPosition = this.getPosition(element);
-
-    this.xPosition = boundingClientRect.x - parentPosition.left;
-    this.yPosition = boundingClientRect.y - parentPosition.top;
-
-    console.log(
-      'x: ' + (boundingClientRect.x - parentPosition.left),
-      'y: ' + (boundingClientRect.y - parentPosition.top)
-    );
-  }
-
-  getPosition(el) {
-    let x = 0;
-    let y = 0;
-    while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-      x += el.offsetLeft - el.scrollLeft;
-      y += el.offsetTop - el.scrollTop;
-      el = el.offsetParent;
-    }
-    return { top: y, left: x };
-  } */
-
-  //-------------------------------------------------------------------------
-
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
-
   @ViewChild('insertionCross', { read: ViewContainerRef })
   insertionCross: ViewContainerRef;
-
-  /*     @ViewChildren('comp', { read: ViewContainerRef })
-  public dynComponents: QueryList<ViewContainerRef>;
- */
   @ViewChildren('app-dynamic') public dynamicComponentArray: QueryList<any>;
-
-  @ViewChildren('viewRef', { read: ViewContainerRef })
-  public viewRefs: QueryList<any>;
-
   private counter = 0;
 
   myString = 'defaultString';
@@ -87,26 +47,11 @@ export class AppComponent implements AfterViewInit {
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
-    public indexService: IndexService
-  ) { }
+    public indexService: IndexService,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit() {
-    //  var d = document.getElementById('yourDivId');
-
-    /*     this.insertionCross.style.position = "absolute";
-    this.insertionCross.style.left = x_pos+'px';
-    this.insertionCross.style.top = y_pos+'px';
-    this.insertionCross.nativeElement.setAttribute('highlight', '');
-
-    let el = this.element.nativeElement;
-    el.setAttribute('style', 'color: white; background: red'); */
-
-    // this.insertionCross.
-
-    /*     this.insertionCross.style.position = "absolute";
-    this.insertionCross.style.left = x_pos+'px';
-    this.insertionCross.style.top = y_pos+'px'; */
-
     this.indexService.toDeleteComponent.subscribe((uid) => {
       if (this.componentRefArray && this.componentRefArray.length) {
         for (let i = 0; i < this.componentRefArray.length; i++) {
@@ -120,26 +65,19 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      InsertionCrossComponent
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        InsertionCrossComponent
+      );
     setTimeout(() => {
       this.container.createComponent(componentFactory);
     }, 0);
   }
 
-/*   ngDoCheck() { }
-  @HostListener('document:click', ['$event'])
-  clickout(event) {
-    console.log('TARGET: ', event);
-
-  } */
-
   addComponent(compInput: string = ''): void {
     if (this.indexService.crossVisible) {
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-        DynamicComponent
-      );
+      const componentFactory =
+        this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
 
       this.componentRefArray.push(
         this.container.createComponent(componentFactory)
@@ -147,9 +85,8 @@ export class AppComponent implements AfterViewInit {
 
       this.indexService.currentSelectedItemUID = this.counter;
 
-      this.componentRefArray[
-        this.componentRefArray.length - 1
-      ].instance.uid = this.counter++;
+      this.componentRefArray[this.componentRefArray.length - 1].instance.uid =
+        this.counter++;
 
       this.indexService.crossVisible = false;
     }
@@ -165,7 +102,6 @@ export class AppComponent implements AfterViewInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeydownEvent(event: KeyboardEvent) {
-
     switch (event.key) {
       case 'Backspace':
         this.indexService.mainArray[
@@ -184,7 +120,6 @@ export class AppComponent implements AfterViewInit {
             }
           }
         }
-
         break;
     }
 
@@ -200,12 +135,13 @@ export class AppComponent implements AfterViewInit {
   @HostListener('document:keyup', ['$event'])
   handleKeyUpEvent(event: KeyboardEvent) {
     if (this.indexService.mainArray[this.indexService.currentSelectedItemUID]) {
-      console.log("ac_individualTrigger: ");
-
-      this.indexService.mainArray[this.indexService.currentSelectedItemUID].individualTrigger.next();
+      this.indexService.mainArray[
+        this.indexService.currentSelectedItemUID
+      ].individualTrigger.next();
     }
   }
 
+  // @HostListener('document:mousedown', ['$event'])
   @HostListener('document:click', ['$event'])
   handleClickEvent(event: KeyboardEvent) {
     console.log('CLICK: ', event);
@@ -218,5 +154,10 @@ export class AppComponent implements AfterViewInit {
       this.indexService.crossVisible = false;
       this.indexService.clickedOnElement = false;
     }
+
+    /* console.log(
+      'nativeElement ',
+      this.componentRefArray[0].location.nativeElement.children[0].getBoundingClientRect()
+    ); */
   }
 }
