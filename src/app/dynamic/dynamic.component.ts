@@ -23,13 +23,12 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   @Output() closeEvent = new EventEmitter<number>();
 
   dragPosition = { x: 0, y: 0 };
-  /*   public xPosition = 0;
-  public yPosition = 0; */
   mathField: any;
   MQ: any;
   customZIndex: number;
   mathFieldBridge;
   specialKey_1: String;
+  itemIsSelected = false;
 
   constructor(public indexService: IndexService) {}
 
@@ -39,11 +38,14 @@ export class DynamicComponent implements AfterViewInit, OnInit {
       this.customZIndex = this.indexService.mainArray[this.uid].zIndex;
     });
 
-    this.indexService.mainArray[this.uid].individualTrigger.subscribe(
-      () => {
-        this.indexService.mainArray[
-          this.uid
-        ].latexOutput = this.mathFieldBridge.latex();
+    this.indexService.mainArray[this.uid].individualTrigger.subscribe(() => {
+      this.indexService.mainArray[this.uid].latexOutput =
+        this.mathFieldBridge.latex();
+    });
+
+    this.indexService.mainArray[this.uid].selectionTrigger.subscribe(
+      (isSelectedPayload) => {
+        this.itemIsSelected = isSelectedPayload;
       }
     );
 
@@ -77,8 +79,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     let element = event.source.getRootElement();
     let boundingClientRect = element.getBoundingClientRect();
     let parentPosition = this.getPosition(element);
-    /*   this.xPosition = boundingClientRect.x - parentPosition.left;
-    this.yPosition = boundingClientRect.y - parentPosition.top; */
   }
 
   getPosition(el) {

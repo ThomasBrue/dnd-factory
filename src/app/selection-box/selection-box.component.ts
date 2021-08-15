@@ -6,8 +6,17 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./selection-box.component.css'],
 })
 export class SelectionBoxComponent implements OnInit {
+  myColor = 'red';
+
+  myWidth = 0;
+  myHeight = 0;
+
+  ankerPointTop = 0;
+  ankerPointLeft = 0;
+
+  isVisible = false;
+
   constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 }

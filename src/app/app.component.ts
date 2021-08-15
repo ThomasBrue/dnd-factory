@@ -25,13 +25,22 @@ import { SelectionBoxComponent } from './selection-box/selection-box.component';
 export class AppComponent implements AfterViewInit {
   title = 'dnd-factory';
 
-  @ViewChild('myIdSelectBox') mySelectionBox: ElementRef;
-
   public xPosition = 20;
   public yPosition = 20;
 
   private componentRef: ComponentRef<any>;
   private componentRefArray: ComponentRef<any>[] = [];
+
+  myString = 'defaultString';
+  myArray: string[] = ['item1', 'item2', 'item3', 'item4'];
+
+  myArrayFromChild: string[] = [];
+
+  isOverLapping = false;
+  dragActive = false;
+
+  startX = 0;
+  startY = 0;
 
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
@@ -39,11 +48,9 @@ export class AppComponent implements AfterViewInit {
   insertionCross: ViewContainerRef;
   @ViewChildren('app-dynamic') public dynamicComponentArray: QueryList<any>;
   private counter = 0;
+  @ViewChild(SelectionBoxComponent)
+  selectionBox: SelectionBoxComponent = new SelectionBoxComponent();
 
-  myString = 'defaultString';
-  myArray: string[] = ['item1', 'item2', 'item3', 'item4'];
-
-  myArrayFromChild: string[] = [];
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -144,8 +151,6 @@ export class AppComponent implements AfterViewInit {
   // @HostListener('document:mousedown', ['$event'])
   @HostListener('document:click', ['$event'])
   handleClickEvent(event: KeyboardEvent) {
-    console.log('CLICK: ', event);
-
     if (!this.indexService.crossVisible) {
       this.indexService.crossVisible = true;
     }
@@ -154,10 +159,64 @@ export class AppComponent implements AfterViewInit {
       this.indexService.crossVisible = false;
       this.indexService.clickedOnElement = false;
     }
+  }
 
-    /* console.log(
-      'nativeElement ',
-      this.componentRefArray[0].location.nativeElement.children[0].getBoundingClientRect()
-    ); */
+  @HostListener('document:mousedown', ['$event'])
+  handleClickDownEvent(event: MouseEvent) {
+    event.preventDefault();
+
+    this.isOverLapping = false;
+
+    this.dragActive = true;
+
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+
+    this.selectionBox.ankerPointLeft = event.clientX;
+    this.selectionBox.ankerPointTop = event.clientY;
+  }
+
+  @HostListener('document:mousemove', ['$event']) mousemove(event: any) {
+    event.preventDefault();
+
+    if (this.dragActive) {
+      this.selectionBox.isVisible = true;
+      const diffX = event.pageX - this.startX;
+      const diffY = event.pageY - this.startY;
+
+      if (diffX >= 0 && diffY >= 0) {
+        this.selectionBox.myWidth = diffX;
+        this.selectionBox.myHeight = diffY;
+      } else if (diffX >= 0 && diffY < 0) {
+        this.selectionBox.myWidth = diffX;
+        this.selectionBox.myHeight = Math.abs(diffY);
+        this.selectionBox.ankerPointTop = event.clientY;
+      } else if (diffY >= 0 && diffX < 0) {
+        this.selectionBox.myHeight = diffY;
+        this.selectionBox.myWidth = Math.abs(diffX);
+        this.selectionBox.ankerPointLeft = event.clientX;
+      } else if (diffX < 0 && diffY < 0) {
+        this.selectionBox.myWidth = Math.abs(diffX);
+        this.selectionBox.myHeight = Math.abs(diffY);
+
+        this.selectionBox.ankerPointLeft = event.clientX;
+        this.selectionBox.ankerPointTop = event.clientY;
+      }
+    }
+
+    if (this.componentRefArray) {
+      this.indexService.doItemsCollide(
+        this.componentRefArray,
+        this.selectionBox
+      );
+    }
+  }
+
+  @HostListener('document:mouseup', ['$event'])
+  handleClickUpEvent(event: MouseEvent) {
+    event.preventDefault();
+
+    this.dragActive = false;
+    this.selectionBox.isVisible = false;
   }
 }

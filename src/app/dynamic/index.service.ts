@@ -14,6 +14,8 @@ export class IndexService {
   public clickedOnElement = false;
   public currentSelectedItemUID = -1;
 
+  constructor() {}
+
   registerDynComp(uid: number): number {
     this.lastIndex = uid;
     this.mainArray.push({
@@ -22,6 +24,8 @@ export class IndexService {
       individualTrigger: new Subject<boolean>(),
       latexOutput: '',
       insertionPoint: this.insertionPoint,
+      isSelected: false,
+      selectionTrigger: new Subject<boolean>(),
     });
     return uid;
   }
@@ -40,7 +44,6 @@ export class IndexService {
 
   setClickedOnElement(uid: number) {
     this.currentSelectedItemUID = uid;
-    console.log('indexService_CLICK');
     this.clickedOnElement = true;
   }
 
@@ -48,5 +51,37 @@ export class IndexService {
     this.toDeleteComponent.next(uid);
   }
 
-  constructor() {}
+  doItemsCollide(itemRefArray, child) {
+    itemRefArray.forEach((item) => {
+      let aEl = item.location.nativeElement.children[0].getBoundingClientRect();
+      if (aEl) {
+        aEl.offsetBottom = aEl.top + aEl.height;
+        aEl.offsetTop = aEl.top;
+        aEl.offsetRight = aEl.left + aEl.width;
+        aEl.offsetLeft = aEl.left;
+
+        let isOverLapping = false;
+
+        if (
+          aEl.offsetBottom > child.ankerPointTop &&
+          aEl.offsetRight > child.ankerPointLeft &&
+          !(aEl.offsetLeft > child.ankerPointLeft + child.myWidth) &&
+          !(aEl.offsetTop > child.ankerPointTop + child.myHeight)
+        ) {
+          isOverLapping = true;
+        }
+
+        if (isOverLapping && !this.mainArray[item.instance.uid].isSelected) {
+          this.mainArray[item.instance.uid].isSelected = true;
+          this.mainArray[item.instance.uid].selectionTrigger.next(true);
+        } else if (
+          !isOverLapping &&
+          this.mainArray[item.instance.uid].isSelected
+        ) {
+          this.mainArray[item.instance.uid].isSelected = false;
+          this.mainArray[item.instance.uid].selectionTrigger.next(false);
+        }
+      }
+    });
+  }
 }
