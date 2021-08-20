@@ -12,6 +12,7 @@ export class IndexService {
   public insertionPoint = { x: 100, y: 100 };
   public crossVisible = true;
   public clickedOnElement = false;
+  public mouseDownOnElement = false;
   public currentSelectedItemUID = -1;
 
   constructor() {}
@@ -31,6 +32,8 @@ export class IndexService {
   }
 
   moveCompToTop(uid: number) {
+    this.mouseDownOnElement = true;
+
     this.lastIndex = uid;
     this.mainArray.forEach((obj) => {
       if (obj.uid !== uid) {
@@ -82,6 +85,12 @@ export class IndexService {
           this.mainArray[item.instance.uid].selectionTrigger.next(false);
         }
       }
+    });
+  }
+
+  resetSelectionOfAll() {
+    this.mainArray.forEach((item) => {
+      item.selectionTrigger.next(false);
     });
   }
 }

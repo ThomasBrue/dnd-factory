@@ -42,15 +42,19 @@ export class AppComponent implements AfterViewInit {
   startX = 0;
   startY = 0;
 
+  deltaX = 0;
+  deltaY = 0;
+
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
   @ViewChild('insertionCross', { read: ViewContainerRef })
   insertionCross: ViewContainerRef;
-  @ViewChildren('app-dynamic') public dynamicComponentArray: QueryList<any>;
+  @ViewChildren(DynamicComponent) dynamicComponentArray: QueryList<
+    DynamicComponent
+  >;
   private counter = 0;
   @ViewChild(SelectionBoxComponent)
   selectionBox: SelectionBoxComponent = new SelectionBoxComponent();
-
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -72,10 +76,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const componentFactory =
-      this.componentFactoryResolver.resolveComponentFactory(
-        InsertionCrossComponent
-      );
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+      InsertionCrossComponent
+    );
     setTimeout(() => {
       this.container.createComponent(componentFactory);
     }, 0);
@@ -83,8 +86,9 @@ export class AppComponent implements AfterViewInit {
 
   addComponent(compInput: string = ''): void {
     if (this.indexService.crossVisible) {
-      const componentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
+      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+        DynamicComponent
+      );
 
       this.componentRefArray.push(
         this.container.createComponent(componentFactory)
@@ -92,8 +96,9 @@ export class AppComponent implements AfterViewInit {
 
       this.indexService.currentSelectedItemUID = this.counter;
 
-      this.componentRefArray[this.componentRefArray.length - 1].instance.uid =
-        this.counter++;
+      this.componentRefArray[
+        this.componentRefArray.length - 1
+      ].instance.uid = this.counter++;
 
       this.indexService.crossVisible = false;
     }
@@ -174,37 +179,68 @@ export class AppComponent implements AfterViewInit {
 
     this.selectionBox.ankerPointLeft = event.clientX;
     this.selectionBox.ankerPointTop = event.clientY;
+
+    this.componentRefArray.forEach((item) => {
+      item.instance.deltaX =
+        event.clientX -
+        item.location.nativeElement.children[0].getBoundingClientRect().left;
+      item.instance.deltaY =
+        event.clientY -
+        item.location.nativeElement.children[0].getBoundingClientRect().top;
+    });
+
+    if (!this.indexService.mouseDownOnElement) {
+      this.indexService.resetSelectionOfAll();
+    }
   }
 
   @HostListener('document:mousemove', ['$event']) mousemove(event: any) {
     event.preventDefault();
+    event.stopPropagation();
 
     if (this.dragActive) {
-      this.selectionBox.isVisible = true;
-      const diffX = event.pageX - this.startX;
-      const diffY = event.pageY - this.startY;
+      if (!this.indexService.mouseDownOnElement) {
+        this.selectionBox.isVisible = true;
+        const diffX = event.pageX - this.startX;
+        const diffY = event.pageY - this.startY;
 
-      if (diffX >= 0 && diffY >= 0) {
-        this.selectionBox.myWidth = diffX;
-        this.selectionBox.myHeight = diffY;
-      } else if (diffX >= 0 && diffY < 0) {
-        this.selectionBox.myWidth = diffX;
-        this.selectionBox.myHeight = Math.abs(diffY);
-        this.selectionBox.ankerPointTop = event.clientY;
-      } else if (diffY >= 0 && diffX < 0) {
-        this.selectionBox.myHeight = diffY;
-        this.selectionBox.myWidth = Math.abs(diffX);
-        this.selectionBox.ankerPointLeft = event.clientX;
-      } else if (diffX < 0 && diffY < 0) {
-        this.selectionBox.myWidth = Math.abs(diffX);
-        this.selectionBox.myHeight = Math.abs(diffY);
+        if (diffX >= 0 && diffY >= 0) {
+          this.selectionBox.myWidth = diffX;
+          this.selectionBox.myHeight = diffY;
+        } else if (diffX >= 0 && diffY < 0) {
+          this.selectionBox.myWidth = diffX;
+          this.selectionBox.myHeight = Math.abs(diffY);
+          this.selectionBox.ankerPointTop = event.clientY;
+        } else if (diffY >= 0 && diffX < 0) {
+          this.selectionBox.myHeight = diffY;
+          this.selectionBox.myWidth = Math.abs(diffX);
+          this.selectionBox.ankerPointLeft = event.clientX;
+        } else if (diffX < 0 && diffY < 0) {
+          this.selectionBox.myWidth = Math.abs(diffX);
+          this.selectionBox.myHeight = Math.abs(diffY);
 
-        this.selectionBox.ankerPointLeft = event.clientX;
-        this.selectionBox.ankerPointTop = event.clientY;
+          this.selectionBox.ankerPointLeft = event.clientX;
+          this.selectionBox.ankerPointTop = event.clientY;
+        }
+      }
+
+      if (this.indexService.mouseDownOnElement) {
+        this.componentRefArray.forEach((item) => {
+          if (item.instance.itemIsSelected) {
+            item.instance.dragPosition = {
+              x: event.clientX - item.instance.deltaX,
+              y: event.clientY - item.instance.deltaY,
+            };
+          }
+        });
       }
     }
 
-    if (this.componentRefArray) {
+    if (
+      this.componentRefArray &&
+      !this.indexService.mouseDownOnElement &&
+      this.dragActive
+    ) {
       this.indexService.doItemsCollide(
         this.componentRefArray,
         this.selectionBox
@@ -215,8 +251,10 @@ export class AppComponent implements AfterViewInit {
   @HostListener('document:mouseup', ['$event'])
   handleClickUpEvent(event: MouseEvent) {
     event.preventDefault();
+    event.stopPropagation();
 
     this.dragActive = false;
     this.selectionBox.isVisible = false;
+    this.indexService.mouseDownOnElement = false;
   }
 }

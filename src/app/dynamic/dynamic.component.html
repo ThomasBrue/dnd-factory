@@ -14,14 +14,13 @@
   (mouseup)="indexService.setClickedOnElement(uid)"
   style="position: absolute;"
 >
-
   <span [attr.id]="'math-field-animated' + uid"></span>
   <span tabindex="0" [attr.id]="'substitue-id' + uid"></span>
 
   <div style="background-color: rgb(224, 255, 255);">
     z-index: {{ customZIndex }} // uid: {{ uid }}
   </div>
-  <div>itemIsSelected: {{itemIsSelected }}</div>
+  <div>itemIsSelected: {{ itemIsSelected }}</div>
 
   <div class="example-handle" cdkDragHandle>drag</div>
   <button (click)="removeComponent(uid)">remove</button>

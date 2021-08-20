@@ -23,6 +23,10 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   @Output() closeEvent = new EventEmitter<number>();
 
   dragPosition = { x: 0, y: 0 };
+
+  deltaX = 0;
+  deltaY = 0;
+
   mathField: any;
   MQ: any;
   customZIndex: number;
@@ -39,8 +43,9 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     });
 
     this.indexService.mainArray[this.uid].individualTrigger.subscribe(() => {
-      this.indexService.mainArray[this.uid].latexOutput =
-        this.mathFieldBridge.latex();
+      this.indexService.mainArray[
+        this.uid
+      ].latexOutput = this.mathFieldBridge.latex();
     });
 
     this.indexService.mainArray[this.uid].selectionTrigger.subscribe(
