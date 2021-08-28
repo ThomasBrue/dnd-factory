@@ -16,8 +16,8 @@ export class InsertionCrossComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   clickout(event) {
     this.dragPosition = {
-      x: event.clientX - 11,
-      y: event.clientY - 11,
+      x: event.clientX + window.scrollX - 11,
+      y: event.clientY + window.scrollY - 11,
     };
 
     this.indexService.insertionPoint = this.dragPosition;

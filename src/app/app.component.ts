@@ -45,13 +45,17 @@ export class AppComponent implements AfterViewInit {
   deltaX = 0;
   deltaY = 0;
 
+  windowWidth = 0;
+  documentContainerWidth = 804;
+  documentContainerLeft = 79;
+  documentContainerTop = 130;
+
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
   @ViewChild('insertionCross', { read: ViewContainerRef })
   insertionCross: ViewContainerRef;
-  @ViewChildren(DynamicComponent) dynamicComponentArray: QueryList<
-    DynamicComponent
-  >;
+  @ViewChildren(DynamicComponent)
+  dynamicComponentArray: QueryList<DynamicComponent>;
   private counter = 0;
   @ViewChild(SelectionBoxComponent)
   selectionBox: SelectionBoxComponent = new SelectionBoxComponent();
@@ -76,19 +80,35 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      InsertionCrossComponent
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        InsertionCrossComponent
+      );
     setTimeout(() => {
       this.container.createComponent(componentFactory);
     }, 0);
+    this.windowWidth = window.innerWidth;
+    this.setDocumentContainerPosition();
+  }
+  disableScrolling() {
+    let x = window.scrollX;
+    let y = window.scrollY;
+    window.onscroll = function () {
+      window.scrollTo(x, y);
+    };
+  }
+
+  enableScrolling() {
+    window.onscroll = function () {};
   }
 
   addComponent(compInput: string = ''): void {
     if (this.indexService.crossVisible) {
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-        DynamicComponent
-      );
+      this.disableScrolling();
+      const currentScrollPositionY = document.documentElement.scrollTop;
+
+      const componentFactory =
+        this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
 
       this.componentRefArray.push(
         this.container.createComponent(componentFactory)
@@ -96,11 +116,14 @@ export class AppComponent implements AfterViewInit {
 
       this.indexService.currentSelectedItemUID = this.counter;
 
-      this.componentRefArray[
-        this.componentRefArray.length - 1
-      ].instance.uid = this.counter++;
+      this.componentRefArray[this.componentRefArray.length - 1].instance.uid =
+        this.counter++;
 
       this.indexService.crossVisible = false;
+
+      setTimeout(() => {
+        this.enableScrolling();
+      }, 10);
     }
   }
 
@@ -116,6 +139,14 @@ export class AppComponent implements AfterViewInit {
   handleKeydownEvent(event: KeyboardEvent) {
     switch (event.key) {
       case 'Backspace':
+        for (let i = 0; i < this.indexService.mainArray.length; i++) {
+          if (this.indexService.mainArray[i].isSelected) {
+            this.indexService.removeComponent(
+              this.indexService.mainArray[i].uid
+            );
+          }
+        }
+
         this.indexService.mainArray[
           this.indexService.currentSelectedItemUID
         ].individualTrigger.next();
@@ -133,9 +164,9 @@ export class AppComponent implements AfterViewInit {
           }
         }
         break;
+      default:
+        this.addComponent();
     }
-
-    this.addComponent();
 
     if (this.indexService.mainArray[this.indexService.currentSelectedItemUID]) {
       this.indexService.mainArray[
@@ -169,16 +200,14 @@ export class AppComponent implements AfterViewInit {
   @HostListener('document:mousedown', ['$event'])
   handleClickDownEvent(event: MouseEvent) {
     event.preventDefault();
-
     this.isOverLapping = false;
-
     this.dragActive = true;
 
-    this.startX = event.clientX;
-    this.startY = event.clientY;
+    this.startX = event.clientX + window.scrollX;
+    this.startY = event.clientY + window.scrollY;
 
-    this.selectionBox.ankerPointLeft = event.clientX;
-    this.selectionBox.ankerPointTop = event.clientY;
+    this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
+    this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
 
     this.componentRefArray.forEach((item) => {
       item.instance.deltaX =
@@ -210,27 +239,26 @@ export class AppComponent implements AfterViewInit {
         } else if (diffX >= 0 && diffY < 0) {
           this.selectionBox.myWidth = diffX;
           this.selectionBox.myHeight = Math.abs(diffY);
-          this.selectionBox.ankerPointTop = event.clientY;
+          this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
         } else if (diffY >= 0 && diffX < 0) {
           this.selectionBox.myHeight = diffY;
           this.selectionBox.myWidth = Math.abs(diffX);
-          this.selectionBox.ankerPointLeft = event.clientX;
+          this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
         } else if (diffX < 0 && diffY < 0) {
           this.selectionBox.myWidth = Math.abs(diffX);
           this.selectionBox.myHeight = Math.abs(diffY);
 
-          this.selectionBox.ankerPointLeft = event.clientX;
-          this.selectionBox.ankerPointTop = event.clientY;
+          this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
+          this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
         }
       }
 
       if (this.indexService.mouseDownOnElement) {
         this.componentRefArray.forEach((item) => {
           if (item.instance.itemIsSelected) {
-            item.instance.dragPosition = {
-              x: event.clientX - item.instance.deltaX,
-              y: event.clientY - item.instance.deltaY,
-            };
+            this.setDragPosition(item, event);
+          } else if (item.instance.mouseDownOnItem) {
+            this.setDragPosition(item, event);
           }
         });
       }
@@ -248,6 +276,47 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  setDragPosition(item, event) {
+    let myX = 0;
+    if (
+      event.clientX + window.scrollX - item.instance.deltaX >=
+        this.documentContainerLeft &&
+      event.clientX + window.scrollX - item.instance.deltaX <=
+        this.documentContainerLeft +
+          this.documentContainerWidth -
+          item.location.nativeElement.children[0].getBoundingClientRect().width
+    ) {
+      myX = event.clientX + window.scrollX - item.instance.deltaX;
+    } else if (
+      event.clientX + window.scrollX - item.instance.deltaX >
+      this.documentContainerLeft +
+        this.documentContainerWidth -
+        item.location.nativeElement.children[0].getBoundingClientRect().width
+    ) {
+      myX =
+        this.documentContainerLeft +
+        this.documentContainerWidth -
+        item.location.nativeElement.children[0].getBoundingClientRect().width;
+    } else {
+      myX = this.documentContainerLeft;
+    }
+
+    let myY = 0;
+    if (
+      event.clientY + window.scrollY - item.instance.deltaY >=
+      this.documentContainerTop
+    ) {
+      myY = event.clientY + window.scrollY - item.instance.deltaY;
+    } else {
+      myY = this.documentContainerTop;
+    }
+
+    item.instance.dragPosition = {
+      x: myX,
+      y: myY,
+    };
+  }
+
   @HostListener('document:mouseup', ['$event'])
   handleClickUpEvent(event: MouseEvent) {
     event.preventDefault();
@@ -256,5 +325,18 @@ export class AppComponent implements AfterViewInit {
     this.dragActive = false;
     this.selectionBox.isVisible = false;
     this.indexService.mouseDownOnElement = false;
+  }
+
+  setDocumentContainerPosition() {
+    setTimeout(() => {
+      this.documentContainerLeft =
+        (this.windowWidth - this.documentContainerWidth) / 2;
+    }, 0);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.windowWidth = event.target.innerWidth;
+    this.setDocumentContainerPosition();
   }
 }

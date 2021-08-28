@@ -1,9 +1,17 @@
 <app-selection-box></app-selection-box>
 
-<div class="example-boundary">
-  <div #container></div>
-</div>
+<!-- <div class="example-boundary"> -->
+<div #container></div>
 
+<div
+  class="document-container"
+  [style.top.px]="documentContainerTop"
+  [style.left.px]="documentContainerLeft"
+  [style.width.px]="documentContainerWidth"
+></div>
+
+<!-- </div> -->
+<!-- 
 <hr />
 <div>CurrentSelectedItemUID: {{ indexService.currentSelectedItemUID }}</div>
 <div>isOverLapping: {{ isOverLapping}}</div>
@@ -25,3 +33,4 @@
   <div>{{ myString }}</div>
 </div>
 <button (click)="removeComponent()">remove Component</button>
+ -->

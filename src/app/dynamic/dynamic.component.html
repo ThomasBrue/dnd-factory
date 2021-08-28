@@ -1,29 +1,57 @@
 <div
-  style="
-    display: inline-block;
-
-    min-height: 150px;
-    min-width: 150px;
-  "
+  class="grid-container"
+  style="display: inline-block"
   [style.z-index]="customZIndex"
-  cdkDrag
-  cdkDragBoundary=".example-boundary"
-  [cdkDragFreeDragPosition]="dragPosition"
-  (cdkDragEnded)="onDragEnded($event)"
   (mousedown)="indexService.moveCompToTop(uid)"
   (mouseup)="indexService.setClickedOnElement(uid)"
-  style="position: absolute;"
+  style="position: absolute"
+  [style.background-color]="
+    itemIsSelected ? 'rgba(96, 171, 239, 0.54)' : 'rgba(0, 0, 0, 0.0)'
+  "
+  [style.left.px]="dragPosition.x"
+  [style.top.px]="dragPosition.y"
 >
-  <span [attr.id]="'math-field-animated' + uid"></span>
-  <span tabindex="0" [attr.id]="'substitue-id' + uid"></span>
+  <div
+    class="topSection grabbable"
+    (mousedown)="mouseDownOnItem = true"
+    (mouseup)="mouseDownOnItem = false"
+  ></div>
+  <div
+    class="leftSection grabbable"
+    (mousedown)="mouseDownOnItem = true"
+    (mouseup)="mouseDownOnItem = false"
+  ></div>
 
-  <div style="background-color: rgb(224, 255, 255);">
+  <div class="mainSection">
+    <span [attr.id]="'math-field-animated' + uid"></span>
+    <span tabindex="0" [attr.id]="'substitue-id' + uid"></span>
+  </div>
+
+  <div
+    class="rightSection grabbable"
+    (mousedown)="mouseDownOnItem = true"
+    (mouseup)="mouseDownOnItem = false"
+  ></div>
+  <div
+    class="bottomSection grabbable"
+    (mousedown)="mouseDownOnItem = true"
+    (mouseup)="mouseDownOnItem = false"
+  ></div>
+
+  <!-- <div class="example-handle">drag</div> -->
+  <!-- </div> -->
+
+  <!-- <div class="example-handle" cdkDragHandle>drag</div> -->
+
+  <!--   <div style="background-color: rgb(224, 255, 255);">
     z-index: {{ customZIndex }} // uid: {{ uid }}
   </div>
   <div>itemIsSelected: {{ itemIsSelected }}</div>
 
+  <div>mouseDownOnItem: {{ mouseDownOnItem }}</div>
+
   <div class="example-handle" cdkDragHandle>drag</div>
   <button (click)="removeComponent(uid)">remove</button>
 
-  <button (click)="logLatex()">logLatex</button>
+  <button (click)="logLatex()">logLatex</button> -->
 </div>

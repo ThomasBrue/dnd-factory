@@ -33,6 +33,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   mathFieldBridge;
   specialKey_1: String;
   itemIsSelected = false;
+  mouseDownOnItem = false;
 
   constructor(public indexService: IndexService) {}
 
@@ -43,9 +44,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     });
 
     this.indexService.mainArray[this.uid].individualTrigger.subscribe(() => {
-      this.indexService.mainArray[
-        this.uid
-      ].latexOutput = this.mathFieldBridge.latex();
+      this.indexService.mainArray[this.uid].latexOutput =
+        this.mathFieldBridge.latex();
     });
 
     this.indexService.mainArray[this.uid].selectionTrigger.subscribe(
@@ -97,8 +97,34 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     return { top: y, left: x };
   }
 
-  handleKeydownEvent(key: string) {
+  /*   onlyTriggerParent(event){
+
+    console.log("this: ", this)
+    console.log("target: ", event.target);
+    
+
+    if (event.target !== this){
+      console.log("clicked CHILD");  
+    }else{
+      console.log("clicked PARENT");
+
+    }
+  } */
+
+  /*   $('.foobar').on('click', function(e) {
+    if (e.target !== this)
+      return;
+    
+    alert( 'clicked the foobar' );
+  }); */
+
+  /* handleKeydownEvent(key: string) {
     console.log('Keydown: ', key);
+
+    if (key === 'Backspace') {
+      this.indexService.removeComponent(this.uid);
+    }
+
     if (this.specialKey_1 == '') {
       if (key === 'Shift') {
         this.specialKey_1 = key;
@@ -181,5 +207,5 @@ export class DynamicComponent implements AfterViewInit, OnInit {
           break;
       }
     }
-  }
+  } */
 }

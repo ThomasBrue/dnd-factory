@@ -58,10 +58,10 @@ export class IndexService {
     itemRefArray.forEach((item) => {
       let aEl = item.location.nativeElement.children[0].getBoundingClientRect();
       if (aEl) {
-        aEl.offsetBottom = aEl.top + aEl.height;
-        aEl.offsetTop = aEl.top;
-        aEl.offsetRight = aEl.left + aEl.width;
-        aEl.offsetLeft = aEl.left;
+        aEl.offsetBottom = aEl.top+ window.scrollY + aEl.height;
+        aEl.offsetTop = aEl.top + window.scrollY;
+        aEl.offsetRight = aEl.left + window.scrollX + aEl.width;
+        aEl.offsetLeft = aEl.left + window.scrollX;
 
         let isOverLapping = false;
 

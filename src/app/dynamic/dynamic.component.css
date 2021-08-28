@@ -1,5 +1,44 @@
-.example-handle {
+/* .example-handle {
   width: 40px;
   height: 40px;
   background-color: rgb(88, 241, 241);
+} */
+
+.topSection {
+  grid-area: top;
+}
+.leftSection {
+  grid-area: left;
+}
+.mainSection {
+  grid-area: main;
+}
+.rightSection {
+  grid-area: right;
+}
+.bottomSection {
+  grid-area: bottom;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    "left top right"
+    "left main right"
+    "left bottom right";
+  grid-template-columns: 10px auto 10px;
+  grid-template-rows: 10px auto 10px;
+}
+
+.grabbable {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.grabbable:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
 }
