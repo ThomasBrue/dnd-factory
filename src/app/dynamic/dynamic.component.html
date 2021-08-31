@@ -22,7 +22,11 @@
     (mouseup)="mouseDownOnItem = false"
   ></div>
 
-  <div class="mainSection">
+  <div
+    class="mainSection"
+    (mouseup)="indexService.setCursorInMathfield(uid)"
+    [class.cursorInMathieldDesign]="cursorInMathfield"
+  >
     <span [attr.id]="'math-field-animated' + uid"></span>
     <span tabindex="0" [attr.id]="'substitue-id' + uid"></span>
   </div>
@@ -54,4 +58,8 @@
   <button (click)="removeComponent(uid)">remove</button>
 
   <button (click)="logLatex()">logLatex</button> -->
+  <!--  <button (click)="logLatex()">logLatex</button> -->
 </div>
+
+<div>cursorInMathfield: {{ cursorInMathfield }}</div>
+<div>mouseDownOnItem: {{ mouseDownOnItem }}</div>

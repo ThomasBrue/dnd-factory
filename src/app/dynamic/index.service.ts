@@ -27,6 +27,7 @@ export class IndexService {
       insertionPoint: this.insertionPoint,
       isSelected: false,
       selectionTrigger: new Subject<boolean>(),
+      cursorInMathfieldTrigger: new Subject<boolean>(),
     });
     return uid;
   }
@@ -50,6 +51,39 @@ export class IndexService {
     this.clickedOnElement = true;
   }
 
+  //---------------------------------------------------------------
+  setCursorInMathfield(uid: number) {
+    for (let i = 0; i < this.mainArray.length; i++) {
+      // this.mainArray[i].cursorInMathfield = true;
+
+      if (this.mainArray[i].uid === uid) {
+        // this.mainArray[i].cursorInMathfield = true;
+        this.mainArray[i].cursorInMathfieldTrigger.next(true);
+      } else {
+        this.mainArray[i].cursorInMathfieldTrigger.next(false);
+      }
+
+      // this.mainArray[i].selectionTrigger.next(true);
+    }
+  }
+
+  /*  resetCursorWhenCrossVisible() {
+    if (this.crossVisible) {
+      for (let i = 0; i < this.mainArray.length; i++) {
+        // this.mainArray[i].cursorInMathfield = true;
+  
+     
+          // this.mainArray[i].cursorInMathfield = true;
+          this.mainArray[i].cursorInMathfieldTrigger.next(true);
+        } else {
+          this.mainArray[i].cursorInMathfieldTrigger.next(false);
+        }
+  
+        // this.mainArray[i].selectionTrigger.next(true);
+      }
+    }
+  } */
+
   removeComponent(uid) {
     this.toDeleteComponent.next(uid);
   }
@@ -58,7 +92,7 @@ export class IndexService {
     itemRefArray.forEach((item) => {
       let aEl = item.location.nativeElement.children[0].getBoundingClientRect();
       if (aEl) {
-        aEl.offsetBottom = aEl.top+ window.scrollY + aEl.height;
+        aEl.offsetBottom = aEl.top + window.scrollY + aEl.height;
         aEl.offsetTop = aEl.top + window.scrollY;
         aEl.offsetRight = aEl.left + window.scrollX + aEl.width;
         aEl.offsetLeft = aEl.left + window.scrollX;

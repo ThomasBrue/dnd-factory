@@ -34,6 +34,7 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   specialKey_1: String;
   itemIsSelected = false;
   mouseDownOnItem = false;
+  cursorInMathfield = false;
 
   constructor(public indexService: IndexService) {}
 
@@ -54,7 +55,17 @@ export class DynamicComponent implements AfterViewInit, OnInit {
       }
     );
 
+    this.indexService.mainArray[this.uid].cursorInMathfieldTrigger.subscribe(
+      (cursorInMathfieldPayload) => {
+        this.cursorInMathfield = cursorInMathfieldPayload;
+      }
+    );
+
+    // cursorInMathfieldTrigger
+
     this.dragPosition = this.indexService.insertionPoint;
+
+    console.log('UID: ', this.uid);
   }
 
   ngAfterViewInit() {
@@ -67,9 +78,16 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
     this.MQ.MathField(this.mathField).focus();
   }
+  /* 
+  selectMathField() {
+    console.log('mathfield selected');
+    this.cursorInMathfield = true;
+  } */
 
   logLatex() {
     console.log('logLatex: ', this.mathFieldBridge.latex());
+
+    console.log('cursorInMathfield', this.cursorInMathfield);
   }
 
   removeComponent(uid: number) {
