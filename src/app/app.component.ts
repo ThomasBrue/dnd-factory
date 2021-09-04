@@ -14,6 +14,8 @@ import {
 import { DynamicComponent } from './dynamic/dynamic.component';
 
 import { IndexService } from './dynamic/index.service';
+import { ButtonsService } from './buttons/buttons.service';
+
 import { InsertionCrossComponent } from './insertion-cross/insertion-cross.component';
 import { SelectionBoxComponent } from './selection-box/selection-box.component';
 
@@ -63,6 +65,7 @@ export class AppComponent implements AfterViewInit {
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     public indexService: IndexService,
+    public buttonsService: ButtonsService,
     private renderer: Renderer2
   ) {}
 
@@ -80,10 +83,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const componentFactory =
-      this.componentFactoryResolver.resolveComponentFactory(
-        InsertionCrossComponent
-      );
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+      InsertionCrossComponent
+    );
     setTimeout(() => {
       this.container.createComponent(componentFactory);
     }, 0);
@@ -107,8 +109,9 @@ export class AppComponent implements AfterViewInit {
       this.disableScrolling();
       const currentScrollPositionY = document.documentElement.scrollTop;
 
-      const componentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
+      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+        DynamicComponent
+      );
 
       this.componentRefArray.push(
         this.container.createComponent(componentFactory)
@@ -116,10 +119,17 @@ export class AppComponent implements AfterViewInit {
 
       this.indexService.currentSelectedItemUID = this.counter;
 
-      this.componentRefArray[this.componentRefArray.length - 1].instance.uid =
-        this.counter++;
+      this.componentRefArray[
+        this.componentRefArray.length - 1
+      ].instance.uid = this.counter++;
 
       this.indexService.crossVisible = false;
+
+      this.indexService.currentSelectedCurserInItemUID = this.counter - 1;
+
+      setTimeout(() => {
+        this.indexService.setCursorInMathfield(-1);
+      }, 0);
 
       setTimeout(() => {
         this.enableScrolling();
@@ -184,7 +194,6 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  // @HostListener('document:mousedown', ['$event'])
   @HostListener('document:click', ['$event'])
   handleClickEvent(event: KeyboardEvent) {
     if (!this.indexService.crossVisible) {
@@ -195,6 +204,10 @@ export class AppComponent implements AfterViewInit {
       this.indexService.crossVisible = false;
       this.indexService.clickedOnElement = false;
     }
+
+    setTimeout(() => {
+      this.indexService.setCursorInMathfield(-1);
+    }, 0);
   }
 
   @HostListener('document:mousedown', ['$event'])

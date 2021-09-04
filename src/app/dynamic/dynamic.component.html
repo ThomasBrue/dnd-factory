@@ -1,10 +1,10 @@
 <div
   class="grid-container"
-  style="display: inline-block"
+  style="display: inline-block;"
   [style.z-index]="customZIndex"
   (mousedown)="indexService.moveCompToTop(uid)"
   (mouseup)="indexService.setClickedOnElement(uid)"
-  style="position: absolute"
+  style="position: absolute;"
   [style.background-color]="
     itemIsSelected ? 'rgba(96, 171, 239, 0.54)' : 'rgba(0, 0, 0, 0.0)'
   "
@@ -24,7 +24,7 @@
 
   <div
     class="mainSection"
-    (mouseup)="indexService.setCursorInMathfield(uid)"
+    (mousedown)="indexService.currentSelectedCurserInItemUID = uid"
     [class.cursorInMathieldDesign]="cursorInMathfield"
   >
     <span [attr.id]="'math-field-animated' + uid"></span>
@@ -61,5 +61,5 @@
   <!--  <button (click)="logLatex()">logLatex</button> -->
 </div>
 
-<div>cursorInMathfield: {{ cursorInMathfield }}</div>
-<div>mouseDownOnItem: {{ mouseDownOnItem }}</div>
+<!-- <div>cursorInMathfield: {{ cursorInMathfield }}</div>
+<div>mouseDownOnItem: {{ mouseDownOnItem }}</div> -->

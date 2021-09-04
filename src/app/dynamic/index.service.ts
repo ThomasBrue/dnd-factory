@@ -14,6 +14,7 @@ export class IndexService {
   public clickedOnElement = false;
   public mouseDownOnElement = false;
   public currentSelectedItemUID = -1;
+  public currentSelectedCurserInItemUID = -1;
 
   constructor() {}
 
@@ -28,6 +29,7 @@ export class IndexService {
       isSelected: false,
       selectionTrigger: new Subject<boolean>(),
       cursorInMathfieldTrigger: new Subject<boolean>(),
+      writeOjectToMathfieldTrigger: new Subject<object>(),
     });
     return uid;
   }
@@ -53,10 +55,25 @@ export class IndexService {
 
   //---------------------------------------------------------------
   setCursorInMathfield(uid: number) {
+    /*     if (uid === -1 && this.crossVisible) {
+      for (let i = 0; i < this.mainArray.length; i++) {
+        this.mainArray[i].cursorInMathfieldTrigger.next(false);
+      }
+    } else { */
+
+    /*  console.log('crossVisible: ', this.crossVisible);
+    console.log(
+      'currentSelectedCurserInItemUID: ',
+      this.currentSelectedCurserInItemUID
+    ); */
+
     for (let i = 0; i < this.mainArray.length; i++) {
       // this.mainArray[i].cursorInMathfield = true;
 
-      if (this.mainArray[i].uid === uid) {
+      if (
+        !this.crossVisible &&
+        this.mainArray[i].uid === this.currentSelectedCurserInItemUID
+      ) {
         // this.mainArray[i].cursorInMathfield = true;
         this.mainArray[i].cursorInMathfieldTrigger.next(true);
       } else {
@@ -64,6 +81,17 @@ export class IndexService {
       }
 
       // this.mainArray[i].selectionTrigger.next(true);
+    }
+    // }
+  }
+
+  onClickMathButton(e: any, button) {
+    console.log('onClickMathButton');
+    for (let i = 0; i < this.mainArray.length; i++) {
+      if (this.mainArray[i].uid === this.currentSelectedCurserInItemUID) {
+        this.mainArray[i].writeOjectToMathfieldTrigger.next(button);
+      }
+      e.preventDefault();
     }
   }
 

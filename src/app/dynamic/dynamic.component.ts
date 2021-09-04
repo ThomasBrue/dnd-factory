@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 
 import { IndexService } from './index.service';
+import { ButtonsService } from '../buttons/buttons.service';
 
 @Component({
   selector: 'app-dynamic',
@@ -36,7 +37,10 @@ export class DynamicComponent implements AfterViewInit, OnInit {
   mouseDownOnItem = false;
   cursorInMathfield = false;
 
-  constructor(public indexService: IndexService) {}
+  constructor(
+    public indexService: IndexService,
+    private buttonsService: ButtonsService
+  ) {}
 
   ngOnInit() {
     this.customZIndex = this.indexService.registerDynComp(this.uid);
@@ -45,8 +49,9 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     });
 
     this.indexService.mainArray[this.uid].individualTrigger.subscribe(() => {
-      this.indexService.mainArray[this.uid].latexOutput =
-        this.mathFieldBridge.latex();
+      this.indexService.mainArray[
+        this.uid
+      ].latexOutput = this.mathFieldBridge.latex();
     });
 
     this.indexService.mainArray[this.uid].selectionTrigger.subscribe(
@@ -61,11 +66,22 @@ export class DynamicComponent implements AfterViewInit, OnInit {
       }
     );
 
-    // cursorInMathfieldTrigger
+    //------------------------------------------------------------------------------------------------------------------------------
+    this.indexService.mainArray[
+      this.uid
+    ].writeOjectToMathfieldTrigger.subscribe((buttonsObj) => {
+      if (buttonsObj.action === 'write') {
+        this.MQ.MathField(this.mathField).write(buttonsObj.content);
+      } else if (buttonsObj.action === 'cmd') {
+        this.MQ.MathField(this.mathField).cmd(buttonsObj.content);
+      } else {
+        this.MQ.MathField(this.mathField).keystroke(buttonsObj.content);
+      }
+      this.MQ.MathField(this.mathField).focus();
+    });
+    //------------------------------------------------------------------------------------------------------------------------------
 
     this.dragPosition = this.indexService.insertionPoint;
-
-    console.log('UID: ', this.uid);
   }
 
   ngAfterViewInit() {

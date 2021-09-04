@@ -10,6 +10,22 @@
   [style.width.px]="documentContainerWidth"
 ></div>
 
+<div style="position: absolute;">
+  <button
+    style="width: 40px; height: 40px;"
+    *ngFor="let button of buttonsService.buttons"
+    (click)="indexService.onClickMathButton($event, button)"
+  >
+    <div *ngIf="!button.displayContent">{{ button.content }}</div>
+    <img
+      style="max-width: 100%; max-height: 100%;"
+      *ngIf="button.displayContent"
+      attr.src="{{ '../assets/math-quill-assets/' + button.displayContent }}"
+      attr.alt="{{ button.content }}"
+    />
+  </button>
+</div>
+
 <!-- </div> -->
 <!-- 
 <hr />
