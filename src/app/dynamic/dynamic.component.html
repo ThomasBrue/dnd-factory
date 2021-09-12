@@ -1,10 +1,10 @@
 <div
   class="grid-container"
-  style="display: inline-block;"
+  style="display: inline-block"
   [style.z-index]="customZIndex"
   (mousedown)="indexService.moveCompToTop(uid)"
   (mouseup)="indexService.setClickedOnElement(uid)"
-  style="position: absolute;"
+  style="position: absolute"
   [style.background-color]="
     itemIsSelected ? 'rgba(96, 171, 239, 0.54)' : 'rgba(0, 0, 0, 0.0)'
   "
@@ -29,6 +29,10 @@
   >
     <span [attr.id]="'math-field-animated' + uid"></span>
     <span tabindex="0" [attr.id]="'substitue-id' + uid"></span>
+
+    <div>itemIsSelected: {{ itemIsSelected }}</div>
+    <div>mouseDownOnItem: {{ mouseDownOnItem }}</div>
+    <div>cursorInMathfield: {{ cursorInMathfield }}</div>
   </div>
 
   <div

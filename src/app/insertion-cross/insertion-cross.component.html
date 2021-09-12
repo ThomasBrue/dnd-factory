@@ -1,9 +1,10 @@
 <div
-  cdkDrag
-  [cdkDragFreeDragPosition]="dragPosition"
-  style="height: 24px; width: 24px"
+  [style.top.px]="positionTop"
+  [style.left.px]="positionLeft"
+  style="height: 24px; width: 24px; position: absolute; z-index: 1"
+  *ngIf="indexService.crossVisible"
 >
-  <div *ngIf="indexService.crossVisible">
+  <div>
     <div
       style="
         height: 10px;

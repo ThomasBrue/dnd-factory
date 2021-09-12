@@ -54,8 +54,10 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('container', { read: ViewContainerRef })
   container: ViewContainerRef;
-  @ViewChild('insertionCross', { read: ViewContainerRef })
-  insertionCross: ViewContainerRef;
+
+  @ViewChild(InsertionCrossComponent)
+  insertionCross: InsertionCrossComponent = new InsertionCrossComponent(null);
+
   @ViewChildren(DynamicComponent)
   dynamicComponentArray: QueryList<DynamicComponent>;
   private counter = 0;
@@ -83,12 +85,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      InsertionCrossComponent
-    );
-    setTimeout(() => {
-      this.container.createComponent(componentFactory);
-    }, 0);
     this.windowWidth = window.innerWidth;
     this.setDocumentContainerPosition();
   }
@@ -109,9 +105,8 @@ export class AppComponent implements AfterViewInit {
       this.disableScrolling();
       const currentScrollPositionY = document.documentElement.scrollTop;
 
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-        DynamicComponent
-      );
+      const componentFactory =
+        this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
 
       this.componentRefArray.push(
         this.container.createComponent(componentFactory)
@@ -119,16 +114,15 @@ export class AppComponent implements AfterViewInit {
 
       this.indexService.currentSelectedItemUID = this.counter;
 
-      this.componentRefArray[
-        this.componentRefArray.length - 1
-      ].instance.uid = this.counter++;
+      this.componentRefArray[this.componentRefArray.length - 1].instance.uid =
+        this.counter++;
 
       this.indexService.crossVisible = false;
 
       this.indexService.currentSelectedCurserInItemUID = this.counter - 1;
 
       setTimeout(() => {
-        this.indexService.setCursorInMathfield(-1);
+        this.indexService.setCursorInMathfield();
       }, 0);
 
       setTimeout(() => {
@@ -195,26 +189,65 @@ export class AppComponent implements AfterViewInit {
   }
 
   @HostListener('document:click', ['$event'])
-  handleClickEvent(event: KeyboardEvent) {
-    if (!this.indexService.crossVisible) {
-      this.indexService.crossVisible = true;
-    }
-
-    if (this.indexService.clickedOnElement) {
-      this.indexService.crossVisible = false;
-      this.indexService.clickedOnElement = false;
-    }
-
-    setTimeout(() => {
-      this.indexService.setCursorInMathfield(-1);
-    }, 0);
+  handleClickEvent(event: MouseEvent) {
+    //not in use yet
   }
 
   @HostListener('document:mousedown', ['$event'])
   handleClickDownEvent(event: MouseEvent) {
-    event.preventDefault();
     this.isOverLapping = false;
     this.dragActive = true;
+
+    if (this.indexService.mouseDownOnElement) {
+      this.indexService.crossVisible = false;
+    }
+
+    let adjustedInsertionPointAllowed = true;
+    let myX = 0;
+    if (
+      event.clientX + window.scrollX >= this.documentContainerLeft &&
+      event.clientX + window.scrollX <=
+        this.documentContainerLeft + this.documentContainerWidth
+    ) {
+      myX = event.clientX + window.scrollX;
+    } else if (
+      event.clientX + window.scrollX >
+      this.documentContainerLeft + this.documentContainerWidth
+    ) {
+      myX = this.documentContainerLeft + this.documentContainerWidth;
+      adjustedInsertionPointAllowed = false;
+    } else {
+      myX = this.documentContainerLeft + 11;
+      adjustedInsertionPointAllowed = false;
+    }
+
+    let myY = 0;
+    if (event.clientY + window.scrollY >= this.documentContainerTop) {
+      myY = event.clientY + window.scrollY;
+    } else {
+      myY = this.documentContainerTop + 11;
+      adjustedInsertionPointAllowed = false;
+    }
+
+    if (adjustedInsertionPointAllowed && !this.indexService.clickedOnElement) {
+      this.insertionCross.positionTop = myY - 11;
+      this.insertionCross.positionLeft = myX - 11;
+
+      if (!this.indexService.mouseDownOnElement) {
+        this.indexService.crossVisible = true;
+        this.indexService.setCursorInMathfield(-1);
+        console.log('resetttt is selected');
+      } else {
+        this.indexService.setCursorInMathfield();
+      }
+
+      this.indexService.insertionPoint = {
+        x: myX - 11,
+        y: myY - 11,
+      };
+    } else if (this.indexService.clickedOnElement) {
+      this.indexService.crossVisible = false;
+    }
 
     this.startX = event.clientX + window.scrollX;
     this.startY = event.clientY + window.scrollY;
@@ -241,32 +274,36 @@ export class AppComponent implements AfterViewInit {
     event.stopPropagation();
 
     if (this.dragActive) {
-      if (!this.indexService.mouseDownOnElement) {
+      if (this.indexService.mouseDownOnElement) {
+        this.selectionBox.isVisible = false;
+        this.indexService.crossVisible = false;
+      } else {
         this.selectionBox.isVisible = true;
-        const diffX = event.pageX - this.startX;
-        const diffY = event.pageY - this.startY;
-
-        if (diffX >= 0 && diffY >= 0) {
-          this.selectionBox.myWidth = diffX;
-          this.selectionBox.myHeight = diffY;
-        } else if (diffX >= 0 && diffY < 0) {
-          this.selectionBox.myWidth = diffX;
-          this.selectionBox.myHeight = Math.abs(diffY);
-          this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
-        } else if (diffY >= 0 && diffX < 0) {
-          this.selectionBox.myHeight = diffY;
-          this.selectionBox.myWidth = Math.abs(diffX);
-          this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
-        } else if (diffX < 0 && diffY < 0) {
-          this.selectionBox.myWidth = Math.abs(diffX);
-          this.selectionBox.myHeight = Math.abs(diffY);
-
-          this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
-          this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
-        }
       }
 
-      if (this.indexService.mouseDownOnElement) {
+      const diffX = event.pageX - this.startX;
+      const diffY = event.pageY - this.startY;
+
+      if (diffX >= 0 && diffY >= 0) {
+        this.selectionBox.myWidth = diffX;
+        this.selectionBox.myHeight = diffY;
+      } else if (diffX >= 0 && diffY < 0) {
+        this.selectionBox.myWidth = diffX;
+        this.selectionBox.myHeight = Math.abs(diffY);
+        this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
+      } else if (diffY >= 0 && diffX < 0) {
+        this.selectionBox.myHeight = diffY;
+        this.selectionBox.myWidth = Math.abs(diffX);
+        this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
+      } else if (diffX < 0 && diffY < 0) {
+        this.selectionBox.myWidth = Math.abs(diffX);
+        this.selectionBox.myHeight = Math.abs(diffY);
+
+        this.selectionBox.ankerPointLeft = event.clientX + window.scrollX;
+        this.selectionBox.ankerPointTop = event.clientY + window.scrollY;
+      }
+
+      if (!this.selectionBox.isVisible) {
         this.componentRefArray.forEach((item) => {
           if (item.instance.itemIsSelected) {
             this.setDragPosition(item, event);
@@ -335,9 +372,16 @@ export class AppComponent implements AfterViewInit {
     event.preventDefault();
     event.stopPropagation();
 
+    if (this.indexService.mouseDownOnElement) {
+      this.indexService.mouseDownOnElement = false;
+    }
+
     this.dragActive = false;
     this.selectionBox.isVisible = false;
-    this.indexService.mouseDownOnElement = false;
+
+    for (let i = 0; i < this.componentRefArray.length; i++) {
+      this.componentRefArray[i].instance.mouseDownOnItem = false;
+    }
   }
 
   setDocumentContainerPosition() {

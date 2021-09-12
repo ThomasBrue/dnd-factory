@@ -49,9 +49,8 @@ export class DynamicComponent implements AfterViewInit, OnInit {
     });
 
     this.indexService.mainArray[this.uid].individualTrigger.subscribe(() => {
-      this.indexService.mainArray[
-        this.uid
-      ].latexOutput = this.mathFieldBridge.latex();
+      this.indexService.mainArray[this.uid].latexOutput =
+        this.mathFieldBridge.latex();
     });
 
     this.indexService.mainArray[this.uid].selectionTrigger.subscribe(
@@ -66,7 +65,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
       }
     );
 
-    //------------------------------------------------------------------------------------------------------------------------------
     this.indexService.mainArray[
       this.uid
     ].writeOjectToMathfieldTrigger.subscribe((buttonsObj) => {
@@ -79,7 +77,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
       }
       this.MQ.MathField(this.mathField).focus();
     });
-    //------------------------------------------------------------------------------------------------------------------------------
 
     this.dragPosition = this.indexService.insertionPoint;
   }
@@ -94,11 +91,6 @@ export class DynamicComponent implements AfterViewInit, OnInit {
 
     this.MQ.MathField(this.mathField).focus();
   }
-  /* 
-  selectMathField() {
-    console.log('mathfield selected');
-    this.cursorInMathfield = true;
-  } */
 
   logLatex() {
     console.log('logLatex: ', this.mathFieldBridge.latex());

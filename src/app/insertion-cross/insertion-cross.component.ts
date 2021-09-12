@@ -7,19 +7,10 @@ import { IndexService } from './../dynamic/index.service';
   styleUrls: ['./insertion-cross.component.css'],
 })
 export class InsertionCrossComponent implements OnInit {
-  dragPosition = { x: 100, y: 100 };
+  positionTop = 100;
+  positionLeft = 100;
 
   constructor(public indexService: IndexService) {}
 
   ngOnInit(): void {}
-
-  @HostListener('document:click', ['$event'])
-  clickout(event) {
-    this.dragPosition = {
-      x: event.clientX + window.scrollX - 11,
-      y: event.clientY + window.scrollY - 11,
-    };
-
-    this.indexService.insertionPoint = this.dragPosition;
-  }
 }

@@ -50,39 +50,20 @@ export class IndexService {
 
   setClickedOnElement(uid: number) {
     this.currentSelectedItemUID = uid;
-    this.clickedOnElement = true;
   }
 
-  //---------------------------------------------------------------
-  setCursorInMathfield(uid: number) {
-    /*     if (uid === -1 && this.crossVisible) {
-      for (let i = 0; i < this.mainArray.length; i++) {
-        this.mainArray[i].cursorInMathfieldTrigger.next(false);
-      }
-    } else { */
-
-    /*  console.log('crossVisible: ', this.crossVisible);
-    console.log(
-      'currentSelectedCurserInItemUID: ',
-      this.currentSelectedCurserInItemUID
-    ); */
-
+  setCursorInMathfield(uid?: number) {
     for (let i = 0; i < this.mainArray.length; i++) {
-      // this.mainArray[i].cursorInMathfield = true;
-
-      if (
-        !this.crossVisible &&
-        this.mainArray[i].uid === this.currentSelectedCurserInItemUID
-      ) {
-        // this.mainArray[i].cursorInMathfield = true;
-        this.mainArray[i].cursorInMathfieldTrigger.next(true);
-      } else {
+      if (uid === -1) {
         this.mainArray[i].cursorInMathfieldTrigger.next(false);
+      } else {
+        if (this.mainArray[i].uid === this.currentSelectedCurserInItemUID) {
+          this.mainArray[i].cursorInMathfieldTrigger.next(true);
+        } else {
+          this.mainArray[i].cursorInMathfieldTrigger.next(false);
+        }
       }
-
-      // this.mainArray[i].selectionTrigger.next(true);
     }
-    // }
   }
 
   onClickMathButton(e: any, button) {
@@ -94,23 +75,6 @@ export class IndexService {
       e.preventDefault();
     }
   }
-
-  /*  resetCursorWhenCrossVisible() {
-    if (this.crossVisible) {
-      for (let i = 0; i < this.mainArray.length; i++) {
-        // this.mainArray[i].cursorInMathfield = true;
-  
-     
-          // this.mainArray[i].cursorInMathfield = true;
-          this.mainArray[i].cursorInMathfieldTrigger.next(true);
-        } else {
-          this.mainArray[i].cursorInMathfieldTrigger.next(false);
-        }
-  
-        // this.mainArray[i].selectionTrigger.next(true);
-      }
-    }
-  } */
 
   removeComponent(uid) {
     this.toDeleteComponent.next(uid);
