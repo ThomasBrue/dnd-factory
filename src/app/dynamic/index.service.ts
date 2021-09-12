@@ -56,6 +56,7 @@ export class IndexService {
     for (let i = 0; i < this.mainArray.length; i++) {
       if (uid === -1) {
         this.mainArray[i].cursorInMathfieldTrigger.next(false);
+        this.currentSelectedCurserInItemUID = -1;
       } else {
         if (this.mainArray[i].uid === this.currentSelectedCurserInItemUID) {
           this.mainArray[i].cursorInMathfieldTrigger.next(true);

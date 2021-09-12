@@ -236,7 +236,6 @@ export class AppComponent implements AfterViewInit {
       if (!this.indexService.mouseDownOnElement) {
         this.indexService.crossVisible = true;
         this.indexService.setCursorInMathfield(-1);
-        console.log('resetttt is selected');
       } else {
         this.indexService.setCursorInMathfield();
       }
